@@ -1,0 +1,154 @@
+.auth-signup{
+  margin: 40px auto;
+  display: flex;
+  width: 60%;
+
+  background-color: #e8e8e86e;
+  border-radius: 8px;
+  -webkit-border-radius: 8px;
+  -moz-border-radius: 8px;
+  -ms-border-radius: 8px;
+  -o-border-radius: 8px;
+  box-shadow: 8px 10px 10px rgba(0, 0, 0, 0.29);
+  height: 620px;
+}
+.auth-signup .image{
+  height: 100%;
+
+ background-image: url("/public/signimg.png");
+  background-size: cover;
+}
+.auth-signup .image{
+  position: relative;
+  width: 100%;
+  height: 620px;
+  overflow: hidden;
+  border-radius: 8px;
+  -webkit-border-radius: 8px;
+  -moz-border-radius: 8px;
+  -ms-border-radius: 8px;
+  -o-border-radius: 8px;
+}
+.auth-wrapper {
+  flex: 1;
+}
+.auth-container{
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 20px ;
+}
+.auth-container .text h2{
+  padding: 10px 0;
+}
+.auth-container .text p{
+  color: #333;
+  font-size: 14px;
+}
+.auth-form{
+    display: flex;
+  flex-direction: column;
+  gap: 22px;
+ 
+
+
+}
+.auth-wrapper {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+}
+
+
+
+ .auth-form input {
+
+  padding: 12px ;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  outline: none;
+  transition: 0.3s;
+}
+
+ .auth-form input:focus {
+  border-color: #000000;
+  box-shadow: 0 0 5px rgba(53, 53, 53, 0.3);
+}
+
+ .auth-form button {
+  padding: 12px;
+  background: black;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: 0.3s;
+  font-size: 16px;
+  text-transform: capitalize;
+}
+.google-button{
+  border: 1px solid black !important;
+  background-color: transparent !important;
+  color: black !important;
+}
+
+.auth-form button:hover {
+  transform: scale(.98);
+  -webkit-transform: scale(.98);
+  -moz-transform: scale(.98);
+  -ms-transform: scale(.98);
+  -o-transform: scale(.98);
+}
+.options{
+  text-align: center;
+}
+.options a{
+  text-decoration:underline;
+  color: brown;
+  font-weight: bold;
+}
+.error {
+  color: red;
+  font-size: 1px;
+ text-align: center;
+}
+
+
+
+
+@media(max-width:850px){
+  .auth-signup .image{
+display: none;
+}
+.auth-signup{
+  width: 80%;
+}
+}
+.loader {
+  width: 18px;
+  height: 18px;
+  border: 3px solid #fff;
+  border-top: 3px solid transparent;
+  border-radius: 50%;
+  display: inline-block;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+button:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
