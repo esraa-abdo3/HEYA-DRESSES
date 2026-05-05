@@ -1,16 +1,37 @@
+
 import "./globals.css";
 import Navbar from "./componets/navabar/Navbar";
 import AuthProvider from "./providers/AuthProvider";
+import { CartProvider } from "./Context/cartcontext";
+import { getInitialCart } from "./Context/cardserver";
+import { WishlistProvider } from "./Context/WishlistContext";
+import { getInitialwishlist } from "./Context/Wishlistserver";
+import Header from "./componets/Header/Header";
+import Footer from "./componets/Footer/Footer";
 
-export default function RootLayout({ children }) {
+
+export default async function RootLayout({ children }) {
+  const cart = await getInitialCart()
+  const wish = await getInitialwishlist();
+  const cleanCart = JSON.parse(JSON.stringify(cart));
+  const cleanWish = JSON.parse(JSON.stringify(wish));
+  
+
   return (
     <html lang="en">
       <body>
-        <AuthProvider>
-          <Navbar />
-          {children}
+        <AuthProvider >
+          <WishlistProvider initiallist={cleanWish}>
+            <CartProvider initialCart={cleanCart} >
+              <Header/>
+              <Navbar />
+           
+            {children}
+            </CartProvider>
+               </WishlistProvider>
         </AuthProvider>
       </body>
+      <Footer/>
     </html>
   );
 }

@@ -71,6 +71,11 @@ export default function SignupPage() {
       setLoading(false)
       Cookies.set("token", res.data.token, { expires: 1 });
       router.push("/")
+      await signIn("credentials", {
+  email: form.email,
+  password: form.password,
+  redirect: false,
+});
   
     }
     catch (error) {
