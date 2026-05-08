@@ -53,7 +53,7 @@
 
 //   );
 // }
-
+export const dynamic = "force-dynamic";
 import "./globals.css";
 import Navbar from "./componets/navabar/Navbar";
 import AuthProvider from "./providers/AuthProvider";
