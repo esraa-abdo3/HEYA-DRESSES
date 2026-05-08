@@ -27,17 +27,16 @@ export default function CartPage() {
   const [promo, setPromo] = useState("");
   const [discount, setDiscount] = useState(0);
   const [promoMessage, setPromoMessage] = useState("");
-  const[total,settotal]=useState(
-  cart.reduce((acc, item) => {
-  const price = item.
-  productId.price || 0;
+const total = cart.reduce((acc, item) => {
+  const price = item.productId.price || 0;
   return acc + price * item.quantity;
-   }, 0)
-  )
-  const [originalTotal, setOriginalTotal] = useState(total);
-  
+}, 0);
   const [isPromoApplied, setIsPromoApplied] = useState(false);
+  const finalTotal = isPromoApplied
+  ? total - (total * discount / 100)
+  : total;
   const [outofstock, setoutofstock] = useState(0);
+  const guestId = localStorage.getItem("guestId");
 function detectStock() {
   const count = cart.filter(
     (e) => e.productId.stock === 0
@@ -92,7 +91,7 @@ const handleCheckout = async (e) => {
  }
   seterror("");
      setloading(true);
-   const payload = {
+const payload = {
   items: cart.map((item) => ({
     productId: item.productId._id,
     quantity: item.quantity,
@@ -104,6 +103,7 @@ const handleCheckout = async (e) => {
     phone: form.phone,
   },
   paymentMethod: form.paymentMethod,
+  guestId: guestId || null,
 };
 
 if (isPromoApplied && promo) {
@@ -123,7 +123,9 @@ if (isPromoApplied && promo) {
       return;
     }
      
-    await fetchWishlist();
+if (!guestId) {
+  await fetchWishlist();
+}
   
     router.push("success")
        setCart([]);
@@ -142,6 +144,8 @@ if (isPromoApplied && promo) {
     setloading(false);
   }
    };
+
+
 const applyPromo = () => {
   if (isPromoApplied) {
     setPromoMessage("Promo already applied");
@@ -159,32 +163,21 @@ const applyPromo = () => {
     return;
   }
 
-  const discountValue = foundPromo.discount;
-
-  setDiscount(discountValue);
-
-const newTotal = originalTotal - (originalTotal * discountValue / 100);
-settotal(newTotal);
-setIsPromoApplied(true);
+  setDiscount(foundPromo.discount);
+  setIsPromoApplied(true);
 
   setPromoMessage("Promo applied successfully");
   setTimeout(() => setPromoMessage(""), 2000);
 };
 
-  const removePromo = () => {
-  settotal(originalTotal);
-    setIsPromoApplied(false);
-     setPromoMessage("Promo removed");
-        setTimeout(() => {
-       setPromoMessage("");
-    },2000 );
+const removePromo = () => {
   setDiscount(0);
-    setPromo("");
+  setIsPromoApplied(false);
+  setPromo("");
 
- 
-  };
-  
-
+  setPromoMessage("Promo removed");
+  setTimeout(() => setPromoMessage(""), 2000);
+};
   return (
     <div className="cart-page">
       <h1 className="title">Your Shopping Cart</h1>
@@ -283,7 +276,7 @@ setIsPromoApplied(true);
                 </div>
                        <div className="line">
               <span>Subtotal</span>
-              <span>${total.toFixed(2)}</span>
+              <span>${finalTotal.toFixed(2)}</span>
                 </div>
 
                 <div className="line">

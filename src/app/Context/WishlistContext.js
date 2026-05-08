@@ -1,19 +1,16 @@
 "use client";
 
-import axios from "axios";
+
 import { createContext, useContext, useState, useEffect } from "react";
-
-
+import { useSession } from "next-auth/react";
 const WishlistContext = createContext();
 
 export const WishlistProvider = ({ children, initiallist = [] }) => {
 
   const [totalPages, settotalpage] = useState(initiallist.totalPages);
   const [currentPage, setcurrentPage] = useState(initiallist.currentPage);
-
- 
-
   const [wishlist, setWishlist] = useState(initiallist.items);
+  const { data: session } = useSession();
  
 const changePage = async (page) => {
 
@@ -29,6 +26,11 @@ const changePage = async (page) => {
   }
 };
   const toggleWishlist = async (product) => {
+      if (!session?.user) {
+    alert("Please login first to use wishlist");
+  
+    return;
+  }
     const productId = product._id
     const exist = wishlist.some(item => item._id === productId);
  

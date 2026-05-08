@@ -1,18 +1,46 @@
  "use client"
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import "./Myorders.css"
 import { FaSortAmountDown, FaSortAmountUp, FaMoneyBillWave, FaCoins } from "react-icons/fa";
 import { FaArrowTrendDown } from "react-icons/fa6";
 import { FaArrowTrendUp } from "react-icons/fa6";
 import { useCart } from "@/app/Context/cartcontext";
+import axios from "axios";
 export default function HistoryOrder({ orders }) {
   const [sortType, setSortType] = useState("newest"); 
   const [currentPage, setCurrentPage] = useState(1);
   const ordersPerPage = 3;
   const { addToCart} = useCart();
+  const [guestId, setGuestId] = useState(null);
 
-  
-  const sortedOrders = [...orders].sort((a, b) => {
+
+useEffect(() => {
+  const id = localStorage.getItem("guestId");
+  setGuestId(id);
+}, []);
+  const [gestorder, setgestorder] = useState([]);
+   useEffect(() => {
+  const fetchOrders = async () => {
+    try {
+      const guestId = localStorage.getItem("guestId");
+
+      // لو مفيش guestId خلاص متعملش request
+      if (!guestId) return;
+
+      const res = await axios.get(`/api/Order?guestId=${guestId}`);
+console.log(res)
+      setgestorder(res.data.orders);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  fetchOrders();
+}, []);
+  console.log(gestorder)
+const data = guestId ? gestorder : orders;
+  console.log("data is",data)
+  const sortedOrders = [...data].sort((a, b) => {
   if (sortType === "newest") {
     return new Date(b.createdAt) - new Date(a.createdAt);
   }

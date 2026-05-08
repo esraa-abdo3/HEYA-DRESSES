@@ -6,17 +6,17 @@ import productmodel from "@/models/productmodel";
 import { stripe } from "@/lib/stripe";
 import Cartmodel from "@/models/Cartmodel";
 import PromoCode from "@/models/Promocodemodel";
+import Ordermodel from "@/models/Ordermodel";
 
 export async function POST(req) {
   await dbConnect();
  // first step authorization
   const session = await getServerSession(authOptions);
-  if (!session) {
-    return Response.json({ message: "Unauthorized" }, { status: 401 });
-  }
+  const userId = session?.user?.id || null;
+  
  // get data from body
   try {
-    const { items, address, paymentMethod ,promoCode } = await req.json();
+    const { items, address, paymentMethod ,promoCode,guestId } = await req.json();
    
 
     if (!items || items.length === 0) {
@@ -71,7 +71,8 @@ export async function POST(req) {
     if (paymentMethod === "cash") {
       
       const order = await Order.create({
-        userId: session.user.id,
+      userId: userId ||null,
+      guestId: userId ? null : guestId,
         items: orderItems,
         address:address,
         paymentMethod,
@@ -89,9 +90,11 @@ export async function POST(req) {
      );
       }
     // clear cart for user  
-      await Cartmodel.findOneAndDelete(
-        { userId: session.user.id }
-      );
+   if (userId) {
+  await Cartmodel.findOneAndDelete({ userId });
+} else {
+  await Cartmodel.findOneAndDelete({ guestId });
+}
 
       // send email 
       await fetch("https://esraaabdo.app.n8n.cloud/webhook-test/c47abab5-2ac1-46f8-931d-0bf98aa898d8", {
@@ -100,7 +103,7 @@ export async function POST(req) {
     "Content-Type": "application/json",
   },
         body: JSON.stringify({
-    email :session.user.email,
+    email: session?.user?.email ?? "guest@guest.com",
     items: orderItems.map(item => {
       const product = products.find(p => p._id.toString() === item.productId.toString());
 
@@ -121,37 +124,7 @@ export async function POST(req) {
     /*********************************
      * 💳 STRIPE FLOW
      *********************************/
-    // if (paymentMethod === "credit_card") {
-    //   const sessionStripe = await stripe.checkout.sessions.create({
-    //     payment_method_types: ["card"],
-    //     mode: "payment",
 
-    //     metadata: {
-    //       userId: session.user.id,
-    //       address: JSON.stringify(address),
-    //       items: JSON.stringify(orderItems),
-    //         discount: discount.toString(),
-    //     },
-
-    //     line_items: orderItems.map((item) => ({
-    //       price_data: {
-    //         currency: "egp",
-    //         product_data: {
-    //           name: item.productId.toString(),
-    //         },
-    //         unit_amount: item.price * 100,
-    //       },
-    //       quantity: item.quantity,
-    //     })),
-
-    //     success_url: "http://localhost:3000/success",
-    //     cancel_url: "http://localhost:3000/cancel",
-    //   });
-
-    //   return Response.json({
-    //     url: sessionStripe.url,
-    //   });
-    // }
 if (paymentMethod === "credit_card") {
   let stripeDiscounts = [];
 
@@ -169,7 +142,8 @@ if (paymentMethod === "credit_card") {
     mode: "payment",
     discounts: stripeDiscounts,
     metadata: {
-      userId: session.user.id,
+        userId: userId || null,
+       guestId: userId ? null : guestId,
       address: JSON.stringify(address),
       items: JSON.stringify(orderItems),
       discount: discount.toString(),
@@ -201,20 +175,40 @@ return Response.json(
 );
   }
 }
-export async function GET() {
+export async function GET(req) {
   await dbConnect();
 
-  const session = await getServerSession(authOptions);
-  console.log(session);
+  try {
+    const session = await getServerSession(authOptions);
 
-  if (!session) {
-    return Response.json({ message: "Unauthorized" }, { status: 401 });
+    const userId = session?.user?.id;
+    const guestId = req.nextUrl.searchParams.get("guestId");
+
+    let filter = null;
+
+    if (userId) {
+      filter = { userId };
+    } else if (guestId) {
+      filter = { guestId };
+    }
+
+    // لو مفيش لا user ولا guest
+    if (!filter) {
+      return Response.json({ orders: [] }, { status: 200 });
+    }
+
+    const orders = await Order.find(filter)
+      .populate("items.productId")
+      .sort({ createdAt: -1 });
+
+    return Response.json({ orders }, { status: 200 });
+  } catch (err) {
+    return Response.json(
+      {
+        message: "Failed to fetch orders",
+        error: err.message,
+      },
+      { status: 500 }
+    );
   }
-
-  const orders = await Order.find({ userId: session.user.email })
-    .populate("items.productId")
-    .sort({ createdAt: -1 });
-
-  return Response.json(  { message: "Orders fetched successfully", orders },
-    { status: 200 });
 }

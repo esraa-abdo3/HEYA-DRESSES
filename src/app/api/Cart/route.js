@@ -7,18 +7,24 @@ export async function POST(req) {
 
   const session = await getServerSession(authOptions);
 
-  if (!session) {
-    return Response.json({ message: "Unauthorized" }, { status: 401 });
+
+
+const userId = session?.user?.id || null;
+const { productId ,guestId} = await req.json();
+  let cart
+  //  Logged in user
+  if (userId) {
+    cart = await Cart.findOne({ userId });
   }
-
-  const userId = session.user.id;
-  const { productId } = await req.json();
-
-  let cart = await Cart.findOne({ userId });
+  // gest user
+   else {
+    cart = await Cart.findOne({ guestId });
+  }
 
   if (!cart) {
     cart = new Cart({
-      userId,
+      userId: userId || null,
+      guestId: userId ? null : guestId,
       items: [{ productId, quantity: 1 }],
     });
   } else {
@@ -39,44 +45,73 @@ const itemIndex = cart.items.findIndex(
 }
 
 
+// export async function GET(req) {
+//   await dbConnect();
+
+//   const session = await getServerSession(authOptions);
+
+//   if (!session) {
+//     return Response.json({ cart: { items: [] } }, { status: 401 });
+//   }
+
+//   const userId = session.user.id;
+
+//   const cart = await Cart.findOne({ userId }).populate("items.productId");
+
+//   return Response.json({ cart });
+// }
 export async function GET(req) {
   await dbConnect();
 
   const session = await getServerSession(authOptions);
 
-  if (!session) {
-    return Response.json({ cart: { items: [] } }, { status: 401 });
+  const userId = session?.user?.id;
+
+  const guestId = req.nextUrl.searchParams.get("guestId");
+
+  let cart;
+
+  if (userId) {
+    cart = await Cart.findOne({ userId }).populate("items.productId");
+  } else if (guestId) {
+    cart = await Cart.findOne({ guestId }).populate("items.productId");
   }
 
-  const userId = session.user.id;
-
-  const cart = await Cart.findOne({ userId }).populate("items.productId");
-
-  return Response.json({ cart });
+  return Response.json({ cart: cart || { items: [] } });
 }
+
 
 export async function PATCH(req) {
   await dbConnect();
 
   const session = await getServerSession(authOptions);
 
-  if (!session) {
-    return Response.json({ message: "Unauthorized" }, { status: 401 });
+  const userId = session?.user?.id;
+
+  const { productId, action, guestId } = await req.json();
+
+  let cart;
+
+  if (userId) {
+    cart = await Cart.findOne({ userId });
+  } else {
+    cart = await Cart.findOne({ guestId });
   }
 
-  const userId = session.user.id;
-  const { productId, action } = await req.json();
-
-  const cart = await Cart.findOne({ userId });
+  if (!cart) {
+    return Response.json({ message: "Cart not found" }, { status: 404 });
+  }
 
   const itemIndex = cart.items.findIndex(
-    (item) => item.productId === productId
+    (item) => item.productId.toString() === productId
   );
 
   if (itemIndex > -1) {
     if (action === "inc") {
       cart.items[itemIndex].quantity += 1;
-    } else if (action === "dec") {
+    }
+
+    if (action === "dec") {
       cart.items[itemIndex].quantity -= 1;
 
       if (cart.items[itemIndex].quantity <= 0) {
@@ -89,25 +124,31 @@ export async function PATCH(req) {
 
   return Response.json({ message: "Cart updated", cart });
 }
+
 export async function DELETE(req) {
   await dbConnect();
 
   const session = await getServerSession(authOptions);
+  const userId = session?.user?.id;
 
-  if (!session) {
-    return Response.json({ message: "Unauthorized" }, { status: 401 });
+  const { productId, guestId } = await req.json();
+
+  let cart;
+
+  if (userId) {
+    cart = await Cart.findOne({ userId });
+  } else {
+    cart = await Cart.findOne({ guestId });
   }
 
-  const userId = session.user.id;
-  const { productId } = await req.json();
+  if (!cart) {
+    return Response.json({ message: "Cart not found" }, { status: 404 });
+  }
 
-  const cart = await Cart.findOne({ userId });
- 
-
-cart.items = cart.items.filter(
-  (item) => item.productId.toString() !== productId
+  // 🗑 remove item only
+  cart.items = cart.items.filter(
+    (item) => item.productId.toString() !== productId
   );
-   console.log(cart)
 
   await cart.save();
 

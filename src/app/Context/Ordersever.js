@@ -9,7 +9,7 @@ export async function getMyOrders() {
   const session = await getServerSession(authOptions);
 
   if (!session) {
-    throw new Error("Unauthorized");
+    return
   }
 
   const orders = await Order.find({ userId: session.user.id })

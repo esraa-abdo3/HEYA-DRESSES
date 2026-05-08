@@ -75,7 +75,8 @@ export default function SignupPage() {
   email: form.email,
   password: form.password,
   redirect: false,
-});
+      });
+          localStorage.removeItem("guestId");
   
     }
     catch (error) {

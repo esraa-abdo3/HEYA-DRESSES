@@ -111,15 +111,26 @@
 // export const useCart = () => useContext(CartContext);
 "use client";
 
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 import axios from "axios";
+import { useSession } from "next-auth/react";
 
 const CartContext = createContext();
 
 export const CartProvider = ({ children, initialCart, promocodes }) => {
+  const { data: session } = useSession();
+    
   const [allpromocodes,setpromocodes]=useState(promocodes)
   const [cart, setCart] = useState(initialCart);
   const [cartError, setCartError] = useState({});
+  useEffect(() => {
+  const guestId = localStorage.getItem("guestId");
+
+  if (!session?.user && guestId) {
+    axios.get(`/api/Cart?guestId=${guestId}`)
+      .then(res => setCart(res.data.cart.items));
+  }
+}, []);
 
   const addToCart = async (product) => {
     setCartError("");
@@ -159,11 +170,18 @@ export const CartProvider = ({ children, initialCart, promocodes }) => {
         },
       ];
     });
+    const payload = {
+  productId: product._id,
+};
+
+const guestId = localStorage.getItem("guestId");
+
+if (guestId) {
+  payload.guestId = guestId;
+}
 
     try {
-      await axios.post("/api/Cart", {
-        productId: product._id,
-      });
+      await axios.post("/api/Cart", payload);
     } catch (e) {
       console.log(e);
       setCart(prev);
@@ -175,11 +193,20 @@ export const CartProvider = ({ children, initialCart, promocodes }) => {
     setCart((old) =>
       old.filter((item) => item.productId._id !== productId)
     );
+    const payload = {
+  productId
+};
+
+const guestId = localStorage.getItem("guestId");
+
+if (guestId) {
+  payload.guestId = guestId;
+}
 
     try {
-      await axios.delete("/api/Cart", {
-        data: { productId },
-      });
+     await axios.delete("/api/Cart", {
+  data: payload,
+});
       console.log("delete scuceesss")
     } catch (e) {
       console.log(e)
@@ -203,13 +230,20 @@ const updateQuantity = async (productId, action) => {
             : item
         )
         .filter((i) => i.quantity > 0)
-    );
+  );
+      const payload = {
+        productId,
+        action
+};
+
+const guestId = localStorage.getItem("guestId");
+
+if (guestId) {
+  payload.guestId = guestId;
+}
 
     try {
-      await axios.patch("/api/Cart", {
-        productId,
-        action,
-      });
+      await axios.patch("/api/Cart",payload);
     } catch (e) {
       setCart(prev);
     }

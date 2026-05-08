@@ -28,7 +28,8 @@ export async function POST(req) {
   if (event.type === "checkout.session.completed") {
     const session = event.data.object;
 
-    const userId = session.metadata.userId;
+   const userId = session.metadata.userId || null;
+   const guestId = session.metadata.guestId || null;
     const items = JSON.parse(session.metadata.items);
     const address = JSON.parse(session.metadata.address);
     const discount = Number(session.metadata.discount || 0);
@@ -41,8 +42,8 @@ export async function POST(req) {
 
     // 🧾 Create Order
     await Order.create({
-      userId,
-      items,
+      userId: userId || null,
+      guestId: userId ? null : guestId,
       address,
       paymentMethod: "credit_card",
       totalPrice,
@@ -50,11 +51,17 @@ export async function POST(req) {
       transactionId: session.id,
     });
 
-    // 🧹 clear cart
-    await Cart.findOneAndUpdate(
-      { userId },
-      { $set: { items: [] } }
-    );
+if (userId) {
+  await Cart.findOneAndUpdate(
+    { userId },
+    { $set: { items: [] } }
+  );
+} else if (guestId) {
+  await Cart.findOneAndUpdate(
+    { guestId },
+    { $set: { items: [] } }
+  );
+}
   }
 
   return new Response("success", { status: 200 });

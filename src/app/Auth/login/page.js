@@ -50,7 +50,7 @@ const handleSubmit = async (e) => {
     password: form.password,
     redirect: false,
   });
-  console.log(res)
+     localStorage.removeItem("guestId");
     router.push("/")
 
   if (res?.error) {

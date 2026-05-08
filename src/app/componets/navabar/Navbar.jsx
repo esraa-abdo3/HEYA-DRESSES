@@ -76,7 +76,13 @@ export default function Navbar() {
                                     >
                                      My Orders
                                     </Link>
-                                    <button onClick={() => signOut()}>
+                                    <button onClick={() =>
+                                    {
+                                       
+                                          signOut()
+                                        }
+                                      
+                                    }>
                                          Log Out
                                     </button>
                                 </div>
