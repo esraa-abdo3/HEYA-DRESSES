@@ -4,7 +4,7 @@ import Getproducts from "../componets/products/ProductsClient";
 
 
 async function getProducts() {
-  const res = await fetch("api/Products", {
+  const res = await fetch("https://heya-dresses-b9u3.vercel.app/api/Products", {
     cache: "no-store",
   });
 
