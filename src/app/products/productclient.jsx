@@ -4,7 +4,7 @@ import Getproducts from "../componets/products/ProductsClient";
 
 
 async function getProducts() {
-  const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/Products`, {
+  const res = await fetch(`/api/Products`, {
     cache: "no-store",
   });
 
