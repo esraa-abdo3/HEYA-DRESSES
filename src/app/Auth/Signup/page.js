@@ -7,6 +7,7 @@ import Image from 'next/image'
 import axios from "axios";
 import Cookies from "js-cookie";
 import { useRouter } from "next/navigation";
+import { signIn } from "next-auth/react";
 
 export default function SignupPage() {
   const [form, setForm] = useState({
@@ -66,16 +67,17 @@ export default function SignupPage() {
       
     }
     try {
-      let res = await axios.post("api/auth/register", body)
+      let res = await axios.post("/api/auth/register", body)
       console.log(res)
       setLoading(false)
       Cookies.set("token", res.data.token, { expires: 1 });
-      router.push("/")
+   
       await signIn("credentials", {
   email: form.email,
   password: form.password,
   redirect: false,
       });
+         router.push("/")
           localStorage.removeItem("guestId");
   
     }

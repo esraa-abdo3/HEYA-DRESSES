@@ -436,6 +436,7 @@ justify-content: space-between;
       border: 1px solid #eee;
     padding: 7px 10px;
     flex: 2;
+    font-size: 16px;
 }
 
 .promo-input::placeholder {

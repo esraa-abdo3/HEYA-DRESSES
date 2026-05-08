@@ -16,6 +16,7 @@ export default function Navbar() {
 
     const [open, setOpen] = useState(false);
     const { data: session } = useSession();
+    console.log(session)
     const { cart } = useCart();
     const { wishlist } = useWishlist();
     const cartCount = cart.reduce((acc, item) => acc + item.quantity, 0);

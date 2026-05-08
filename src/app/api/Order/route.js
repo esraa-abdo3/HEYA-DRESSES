@@ -6,13 +6,15 @@ import productmodel from "@/models/productmodel";
 import { stripe } from "@/lib/stripe";
 import Cartmodel from "@/models/Cartmodel";
 import PromoCode from "@/models/Promocodemodel";
-import Ordermodel from "@/models/Ordermodel";
+
 
 export async function POST(req) {
+  console.log("start");
   await dbConnect();
  // first step authorization
   const session = await getServerSession(authOptions);
   const userId = session?.user?.id || null;
+  console.log("my id", userId)
   
  // get data from body
   try {
@@ -71,14 +73,15 @@ export async function POST(req) {
     if (paymentMethod === "cash") {
       
       const order = await Order.create({
-      userId: userId ||null,
-      guestId: userId ? null : guestId,
+       userId: userId ||null,
+       guestId: userId ? null : guestId,
         items: orderItems,
         address:address,
         paymentMethod,
         totalPrice,
         paymentStatus: "pending",
       });
+    console.log("order sent", order)
       
    // manage the stock
       for (const item of items) {
@@ -89,15 +92,15 @@ export async function POST(req) {
       }
      );
       }
-    // clear cart for user  
+    // clear cart for user
    if (userId) {
   await Cartmodel.findOneAndDelete({ userId });
 } else {
   await Cartmodel.findOneAndDelete({ guestId });
 }
-
-      // send email 
-      await fetch("https://esraaabdo.app.n8n.cloud/webhook/c47abab5-2ac1-46f8-931d-0bf98aa898d8", {
+console.log("feinish");
+      // send email
+       fetch("https://esraaabdo.app.n8n.cloud/webhook/c47abab5-2ac1-46f8-931d-0bf98aa898d8", {
   method: "POST",
   headers: {
     "Content-Type": "application/json",
@@ -117,7 +120,10 @@ export async function POST(req) {
     total: totalPrice,
     address,
   }),
-});
+       })
+        .then(() => console.log("✅ SENT TO N8N"))
+  .catch((err) => console.log("❌ N8N ERROR", err));
+      console.log("📩 AFTER N8N REQUEST");
       return Response.json({ order });
     }
 
@@ -167,14 +173,15 @@ if (paymentMethod === "credit_card") {
 }
   } catch (error) {
 return Response.json(
-  { 
+  {
     message: error.message,
-    stack: error.stack 
+    stack: error.stack
   },
   { status: 500 }
 );
   }
 }
+
 export async function GET(req) {
   await dbConnect();
 
