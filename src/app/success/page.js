@@ -24,7 +24,7 @@ export default async function SuccessPage() {
           <button className="btn">View My Orders</button>
         </Link> */}
 
-        <Link href="/products">
+        <Link href="/">
           <button className="btn secondary">Continue Shopping</button>
         </Link>
       </div>

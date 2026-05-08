@@ -22,7 +22,7 @@ export default function CancelPage() {
           <button className="btn">Back to Cart</button>
         </Link>
 
-        <Link href="/products">
+        <Link href="/">
           <button className="btn secondary">Shop Again</button>
         </Link>
                   
