@@ -1,6 +1,6 @@
 "use client"
 import Link from "next/link";
-import { FaHeart, FaShoppingCart, FaUser } from "react-icons/fa";
+import {  FaShoppingCart, FaUser } from "react-icons/fa";
 import { useEffect, useRef, useState } from "react";
 import "./Navbar.css"
 import { useSession, signIn, signOut } from "next-auth/react";
@@ -9,6 +9,7 @@ import { FaRegHeart } from "react-icons/fa";
 import { useWishlist } from "@/app/Context/WishlistContext";
 import { LuUserRound } from "react-icons/lu";
 import { usePathname } from "next/navigation";
+
 
 
 export default function Navbar() {
@@ -22,8 +23,8 @@ export default function Navbar() {
     const dropdownRef = useRef(null);     
     const pathname=usePathname()
     
-      
     useEffect(() => {
+    
         const handleClickOutside = (e) => {
             if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
                 setDropdownOpen(false);
@@ -44,8 +45,7 @@ export default function Navbar() {
 
                     <ul className="links">
                         <li><Link href={"/"} className={pathname === "/" ? "active" : ""} >Home</Link></li>
-                           <li><Link href={"/"} className={pathname === "/myorders" ? "active" : ""} >my orders</Link></li>
-                        <li><Link href={"/"} >New Arrival</Link></li>
+                           <li><Link href={"/Myorders"} className={pathname === "/Myorders" ? "active" : ""} >my orders</Link></li>
                         <li><Link href={"/"} >About us</Link></li>
 
                  
@@ -71,7 +71,7 @@ export default function Navbar() {
 
                                 <div className={`user-dropdown ${dropdownOpen ? "show" : ""}`}>
                                     <Link
-                                        href="/my-orders"
+                                        href="/Myorders"
                                         onClick={() => setDropdownOpen(false)}
                                     >
                                      My Orders
@@ -82,7 +82,7 @@ export default function Navbar() {
                                 </div>
                             </div>
                         ) : (
-                            <Link href="/login">Sign up</Link>
+                            <Link href="/Auth/login" className="login">Sign up</Link>
                         )}
                     
                     </div>
@@ -96,13 +96,40 @@ export default function Navbar() {
                 <span className="close" onClick={() => setOpen(false)}>✖</span>
 
                 <div className="logoname">Skincare</div>
-
-                <ul className="sidebar-links">
+                <div style={{ display: "flex", justifyContent: "space-between"  , flexDirection:"column", height:"100%"}}>
+                            <ul className="sidebar-links">
                     <li><Link href="/" onClick={() => setOpen(false)}>Home</Link></li>
-                    <li><Link href="/about" onClick={() => setOpen(false)}>About</Link></li>
-                    <li><Link href="/contact" onClick={() => setOpen(false)}>Contact Us</Link></li>
-                    <li><Link href="/products" onClick={() => setOpen(false)}>Products</Link></li>
+                   
+                    <li><Link href="/Myorders" onClick={() => setOpen(false)}>My orders</Link></li>
+                     <li><Link href="/about" onClick={() => setOpen(false)}>About</Link></li>
                 </ul>
+                <div>
+
+            
+                        {session ? (
+                       
+    
+                            <button className="logout"
+                                onClick={() => {
+   signOut();
+   setOpen(false);
+}}
+                            >
+                                         Log Out
+                                    </button>
+                           
+                        ) : (
+                                <Link href="/Auth/login" className="login"
+                                    onClick={() => {
+                                        setOpen(false)
+                                    }}
+                                >Sign up</Link>
+                    )}
+                        </div>
+
+                </div>
+
+        
 
          
 

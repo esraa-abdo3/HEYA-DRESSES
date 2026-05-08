@@ -15,7 +15,7 @@ async function getProducts() {
 
 export default async function Page() {
   const products = (await getProducts()) || [];
-  console.log(products)
+
 
 
 

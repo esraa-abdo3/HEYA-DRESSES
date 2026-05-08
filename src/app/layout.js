@@ -8,21 +8,23 @@ import { WishlistProvider } from "./Context/WishlistContext";
 import { getInitialwishlist } from "./Context/Wishlistserver";
 import Header from "./componets/Header/Header";
 import Footer from "./componets/Footer/Footer";
+import { getAllpromocodes } from "./Context/Promocodeserver";
 
 
 export default async function RootLayout({ children }) {
   const cart = await getInitialCart()
   const wish = await getInitialwishlist();
+  const promocodes = await getAllpromocodes();
   const cleanCart = JSON.parse(JSON.stringify(cart));
   const cleanWish = JSON.parse(JSON.stringify(wish));
-  
 
   return (
-    <html lang="en">
+    <>
+          <html lang="en">
       <body>
         <AuthProvider >
           <WishlistProvider initiallist={cleanWish}>
-            <CartProvider initialCart={cleanCart} >
+            <CartProvider initialCart={cleanCart} promocodes={promocodes} >
               <Header/>
               <Navbar />
            
@@ -31,7 +33,10 @@ export default async function RootLayout({ children }) {
                </WishlistProvider>
         </AuthProvider>
       </body>
-      <Footer/>
+ 
     </html>
+         <Footer/>
+    </>
+
   );
 }

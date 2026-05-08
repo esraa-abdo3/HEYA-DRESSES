@@ -5,6 +5,11 @@
     box-shadow: 0 2px 5px rgba(0,0,0,0.1);
     padding: 17px 0;
     color: white;
+        position: fixed;
+    top: 40px;
+    left: 0;
+    width: 100%;
+    z-index: 10000000000000;
 
 
 }
@@ -25,6 +30,7 @@
     display: flex;
     gap: 25px;
     list-style: none;
+    text-transform: capitalize;
    
 }
 .links a {
@@ -117,7 +123,7 @@
     width: 200px;
     height: 100vh;
     background: white;
-    padding: 10px 20px;
+    padding: 7rem 20px 20px 20px;
     transition: 0.3s;
     display: flex;
     flex-direction: column;
@@ -151,7 +157,7 @@
     list-style: none;
     display: flex;
     flex-direction: column;
-    gap: 15px;
+    gap: 25px;
 
 }
 .sidebar-links a{
@@ -163,10 +169,11 @@
     -moz-transform: 0.3s;
     -ms-transform: 0.3s;
     -o-transform: 0.3s;
+   
 }
 
 .sidebar-links a:hover{
-    color: #a10e30;
+    color: #025c54;
     transform: scale(.98);
     -webkit-transform: scale(.98);
     -moz-transform: scale(.98);
@@ -192,7 +199,11 @@
 }
 
 /* RESPONSIVE */
-@media (max-width: 768px) {
+@media (max-width: 800px) {
+    .Navbar .user-menu,
+    .Navbar .login{
+        display: none;
+    }
     .links {
         display: none;
     }
@@ -329,4 +340,48 @@
 .user-dropdown a:not(:last-child),
 .user-dropdown button:not(:last-child) {
     border-bottom: 1px solid #f0f0f0;
+}
+.sidebar .login,
+.Navbar .login{
+    padding: 10px 10px;
+    background: #025c54;
+    border-radius: 8px;
+    font-size: 16px;
+    text-transform: capitalize;
+    transition:0.3s ;
+    -webkit-transition:0.3s ;
+    -moz-transition:0.3s ;
+    -ms-transition:0.3s ;
+    -o-transition:0.3s ;
+    color: white !important;
+}
+.sidebar .logout{
+    display: inline-block;
+    width: 100%;
+      padding: 10px 10px;
+    background: red;
+    border-radius: 8px;
+    font-size: 16px;
+    text-transform: capitalize;
+    transition:0.3s ;
+    -webkit-transition:0.3s ;
+    -moz-transition:0.3s ;
+    -ms-transition:0.3s ;
+    -o-transition:0.3s ;
+    color: white !important;
+
+}
+.Navbar .login:hover{
+    background: #025c553b;
+    transform: scale(.99);
+    -webkit-transform: scale(.99);
+    -moz-transform: scale(.99);
+    -ms-transform: scale(.99);
+    -o-transform: scale(.99);
+}
+.sidebar .login{
+    color: white !important;
+        display: inline-block;
+    width: 100%;
+    text-align: center;
 }

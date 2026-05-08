@@ -44,8 +44,8 @@ body {
 
 .cart-page {
   width: 80%;
-  margin: 50px auto;
-  padding: 70px 24px 80px;
+  margin: 0px auto;
+  padding: 10rem 24px 80px;
   min-height: 100vh;
   border-radius:8px ;
   -webkit-border-radius:8px ;
@@ -56,7 +56,7 @@ body {
 .cart-page .flex{
   justify-content: space-between;
   display: flex;
-  background-color: #fff;
+  border: 1px solid #eee;
   gap: 25px;
   padding: 25px;
   border-radius: 8px;
@@ -66,6 +66,9 @@ body {
   -o-border-radius: 8px;
 }
 @media(max-width:913px){
+  .cart-page{
+    padding: 10rem 24px 88px !important;
+  }
   .cart-page .flex{
     flex-direction: column;
   }
@@ -476,7 +479,7 @@ p.error{
   color: red;
   text-align: center;
   font-weight: bold;
-   font-size: 14px;
+   font-size: 12px;
 
 }
 .addedpromo{
@@ -484,7 +487,7 @@ p.error{
   justify-content: space-between;
   align-items: center;
   padding: 10px ;
-  background-color: #025c54;
+  background-color: #025c55db;
   color: white;
   text-transform: capitalize;
   font-weight: 500;
@@ -494,7 +497,7 @@ p.error{
   -moz-border-radius: 8px;
   -ms-border-radius: 8px;
   -o-border-radius: 8px;
-  font-size: 16px;
+  font-size: 13px;
   margin-bottom: 10px;
 }
 .addedpromo i {

@@ -5,19 +5,19 @@ import { authOptions } from "../auth/[...nextauth]/route";
 import productmodel from "@/models/productmodel";
 import { stripe } from "@/lib/stripe";
 import Cartmodel from "@/models/Cartmodel";
+import PromoCode from "@/models/Promocodemodel";
 
 export async function POST(req) {
   await dbConnect();
  // first step authorization
   const session = await getServerSession(authOptions);
-  console.log(session)
   if (!session) {
     return Response.json({ message: "Unauthorized" }, { status: 401 });
   }
  // get data from body
   try {
-    const { items, address, paymentMethod } = await req.json();
-    console.log("items from back", items)
+    const { items, address, paymentMethod ,promoCode } = await req.json();
+   
 
     if (!items || items.length === 0) {
       return Response.json({ message: "Cart is empty" }, { status: 400 });
@@ -26,6 +26,19 @@ export async function POST(req) {
     const productIds = items.map((i) => i.productId);
     const products = await productmodel.find({ _id: { $in: productIds } });
     let totalPrice = 0;
+    let discount = 0;
+        if (promoCode) {
+      const promo = await PromoCode.findOne({
+        name: promoCode,
+      });
+
+      if (promo) {
+        discount = promo.discount;
+      }
+    }
+
+
+
  // then get items [id, quantity, price] and totalprice
     const orderItems = items.map((item) => {
       // then check order exist or not
@@ -36,8 +49,10 @@ export async function POST(req) {
       throw new Error("Product not found: " + item.productId);
       }
 
+
       const itemTotal = product.price * item.quantity;
       totalPrice += itemTotal;
+
 
       return {
         productId: product._id,
@@ -45,6 +60,11 @@ export async function POST(req) {
         price: product.price,
       };
     });
+
+  
+
+
+    totalPrice = totalPrice - (totalPrice * discount / 100);
     /*********************************
       CASH ON DELIVERY FLOW
      *********************************/
@@ -101,37 +121,76 @@ export async function POST(req) {
     /*********************************
      * 💳 STRIPE FLOW
      *********************************/
-    if (paymentMethod === "credit_card") {
-      const sessionStripe = await stripe.checkout.sessions.create({
-        payment_method_types: ["card"],
-        mode: "payment",
+    // if (paymentMethod === "credit_card") {
+    //   const sessionStripe = await stripe.checkout.sessions.create({
+    //     payment_method_types: ["card"],
+    //     mode: "payment",
 
-        metadata: {
-          userId: session.user.id,
-          address: JSON.stringify(address),
-          items: JSON.stringify(orderItems),
+    //     metadata: {
+    //       userId: session.user.id,
+    //       address: JSON.stringify(address),
+    //       items: JSON.stringify(orderItems),
+    //         discount: discount.toString(),
+    //     },
+
+    //     line_items: orderItems.map((item) => ({
+    //       price_data: {
+    //         currency: "egp",
+    //         product_data: {
+    //           name: item.productId.toString(),
+    //         },
+    //         unit_amount: item.price * 100,
+    //       },
+    //       quantity: item.quantity,
+    //     })),
+
+    //     success_url: "http://localhost:3000/success",
+    //     cancel_url: "http://localhost:3000/cancel",
+    //   });
+
+    //   return Response.json({
+    //     url: sessionStripe.url,
+    //   });
+    // }
+if (paymentMethod === "credit_card") {
+  let stripeDiscounts = [];
+
+  if (discount > 0) {
+    const coupon = await stripe.coupons.create({
+      percent_off: discount,
+      duration: "once",
+    });
+
+    stripeDiscounts = [{ coupon: coupon.id }];
+  }
+
+  const sessionStripe = await stripe.checkout.sessions.create({
+    payment_method_types: ["card"],
+    mode: "payment",
+    discounts: stripeDiscounts,
+    metadata: {
+      userId: session.user.id,
+      address: JSON.stringify(address),
+      items: JSON.stringify(orderItems),
+      discount: discount.toString(),
+    },
+    line_items: orderItems.map((item) => ({
+      price_data: {
+        currency: "egp",
+        product_data: {
+          name: item.productId.toString(),
         },
+        unit_amount: item.price * 100,
+      },
+      quantity: item.quantity,
+    })),
+    success_url: "http://localhost:3000/success",
+    cancel_url: "http://localhost:3000/cancel",
+  });
 
-        line_items: orderItems.map((item) => ({
-          price_data: {
-            currency: "egp",
-            product_data: {
-              name: item.productId.toString(),
-            },
-            unit_amount: item.price * 100,
-          },
-          quantity: item.quantity,
-        })),
-
-        success_url: "http://localhost:3000/success",
-        cancel_url: "http://localhost:3000/cancel",
-      });
-
-      return Response.json({
-        url: sessionStripe.url,
-      });
-    }
-
+  // ✅ مهم جدًا
+  return Response.json({ url: sessionStripe.url });
+}
   } catch (error) {
 return Response.json(
   { 
@@ -146,12 +205,13 @@ export async function GET() {
   await dbConnect();
 
   const session = await getServerSession(authOptions);
+  console.log(session);
 
   if (!session) {
     return Response.json({ message: "Unauthorized" }, { status: 401 });
   }
 
-  const orders = await Order.find({ userId: session.user.id })
+  const orders = await Order.find({ userId: session.user.email })
     .populate("items.productId")
     .sort({ createdAt: -1 });
 

@@ -24,17 +24,20 @@ export async function POST(req) {
   /******************************
    * 💳 PAYMENT SUCCESS
    ******************************/
+
   if (event.type === "checkout.session.completed") {
     const session = event.data.object;
 
     const userId = session.metadata.userId;
     const items = JSON.parse(session.metadata.items);
     const address = JSON.parse(session.metadata.address);
-
-    const totalPrice = items.reduce(
+    const discount = Number(session.metadata.discount || 0);
+    console.log(discount)
+    let totalPrice = items.reduce(
       (acc, item) => acc + item.price * item.quantity,
       0
     );
+    totalPrice = totalPrice - (totalPrice * discount / 100);
 
     // 🧾 Create Order
     await Order.create({

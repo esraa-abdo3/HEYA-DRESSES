@@ -7,16 +7,14 @@
 // import bcrypt from "bcryptjs";
 // import jwt from "jsonwebtoken";
 
-// const handler = NextAuth({
-
+// // ✅ IMPORTANT: لازم يتعمل export
+// export const authOptions = {
 //   providers: [
-//     // ✅ Google
 //     GoogleProvider({
 //       clientId: process.env.GOOGLE_CLIENT_ID,
 //       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
 //     }),
 
-//     // ✅ Credentials
 //     CredentialsProvider({
 //       name: "credentials",
 //       credentials: {
@@ -25,90 +23,55 @@
 //       },
 
 //       async authorize(credentials) {
-//         try {
-//           await dbConnect();
+//         await dbConnect();
 
-//           const user = await User.findOne({
-//             email: credentials.email,
-//           });
+//         const user = await User.findOne({ email: credentials.email });
 
-//           if (!user) {
-//             throw new Error("Invalid email or password");
-//           }
+//         if (!user) throw new Error("Invalid email or password");
 
-//           const isPasswordCorrect = await bcrypt.compare(
-//             credentials.password,
-//             user.password
-//           );
+//         const isValid = await bcrypt.compare(
+//           credentials.password,
+//           user.password
+//         );
 
-//           if (!isPasswordCorrect) {
-//             throw new Error("Invalid email or password");
-//           }
+//         if (!isValid) throw new Error("Invalid email or password");
 
-
-//           return  user
-//         } catch (err) {
-        
-//           throw err;
-//         }
+//         return user;
 //       },
 //     }),
 //   ],
 
 //   callbacks: {
-//     async signIn({ user, account }) {
-//       try {
-//         await dbConnect();
+    
+//     async jwt({ token, user }) {
+//       if (user) {
+//         token.id = user._id || user.id;
 
-//         // ✅ Google login
-//         if (account.provider === "google") {
-//           const existingUser = await User.findOne({
+//         token.accessToken = jwt.sign(
+//           {
+//             id: user._id || user.id,
 //             email: user.email,
-//           });
-
-//           if (!existingUser) {
-//             await User.create({
-//               username: user.name || "user",
-//               email: user.email,
-//               password: "",
-//             });
-//           }
-//         }
-
-//         return true;
-//       } catch (err) {
-//         console.log("🔥 SIGNIN ERROR:", err);
-//         return false;
+//           },
+//           process.env.NEXTAUTH_SECRET,
+//           { expiresIn: "7d" }
+//         );
 //       }
+
+//       return token;
 //     },
 
-// async jwt({ token, user }) {
-//   if (user) {
-//     token.id = user._id || user.id;
-
-//     token.accessToken = jwt.sign(
-//       {
-//         id: user._id || user.id,
-//         email: user.email,
-//       },
-//       process.env.NEXTAUTH_SECRET,
-//       { expiresIn: "7d" }
-//     );
-//   }
-
-//   return token;
-// },
-
-// async session({ session, token }) {
-//   session.user.id = token.id;
-//   session.accessToken = token.accessToken;
-
-//   return session;
-// }
+//     async session({ session, token }) {
+//       session.user.id = token.id;
+//       session.accessToken = token.accessToken;
+//       return session;
+//     },
 //   },
 
 //   secret: process.env.NEXTAUTH_SECRET,
-// });
+// };
+
+// // ✅ handler
+// const handler = NextAuth(authOptions);
 
 // export { handler as GET, handler as POST };
 import NextAuth from "next-auth";
@@ -119,7 +82,6 @@ import User from "@/models/Usermodel";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 
-// ✅ IMPORTANT: لازم يتعمل export
 export const authOptions = {
   providers: [
     GoogleProvider({
@@ -148,20 +110,40 @@ export const authOptions = {
 
         if (!isValid) throw new Error("Invalid email or password");
 
-        return user;
+        return {
+          id: user._id.toString(),
+          email: user.email,
+          name: user.username,
+        };
       },
     }),
   ],
 
   callbacks: {
-    async jwt({ token, user }) {
+    // 🔥 هنا بنوحّد الـ user في كل الحالات (Google + Credentials)
+    async jwt({ token, user, account, profile }) {
+      await dbConnect();
+
       if (user) {
-        token.id = user._id || user.id;
+        let dbUser = await User.findOne({ email: user.email });
+
+        // لو Google user جديد → نعمله save في Mongo
+        if (!dbUser && account?.provider === "google") {
+          dbUser = await User.create({
+            email: user.email,
+            username: user.name,
+            provider: "google",
+          });
+        }
+
+        token.id = dbUser._id.toString();
+        token.email = dbUser.email;
+        token.role=dbUser.role
 
         token.accessToken = jwt.sign(
           {
-            id: user._id || user.id,
-            email: user.email,
+            id: dbUser._id.toString(),
+            email: dbUser.email,
           },
           process.env.NEXTAUTH_SECRET,
           { expiresIn: "7d" }
@@ -173,7 +155,10 @@ export const authOptions = {
 
     async session({ session, token }) {
       session.user.id = token.id;
+      session.user.email = token.email;
       session.accessToken = token.accessToken;
+      session.user.role=token.role
+
       return session;
     },
   },
@@ -181,7 +166,6 @@ export const authOptions = {
   secret: process.env.NEXTAUTH_SECRET,
 };
 
-// ✅ handler
 const handler = NextAuth(authOptions);
 
 export { handler as GET, handler as POST };

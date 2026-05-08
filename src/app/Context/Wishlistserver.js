@@ -10,7 +10,13 @@ import Usermodel from "@/models/Usermodel";
 export async function getInitialwishlist(page = 1, limit = 3) {
   try {
     const session = await getServerSession(authOptions);
-    if (!session?.user?.id) return null;
+if (!session?.user?.id) {
+  return {
+    items: [],
+    totalPages: 1,
+    currentPage: 1,
+  };
+}
 
     await dbConnect();
 
@@ -35,7 +41,9 @@ export async function getInitialwishlist(page = 1, limit = 3) {
       currentPage: page,
     };
   } catch (err) {
-    console.error("getInitialWishlist error:", err);
-    return null;
+      console.log("ERROR:", err);
+    return Response.json({ error: err.message }, { status: 500 });
+
+ 
   }
 }

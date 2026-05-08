@@ -6,13 +6,14 @@ import "./wishlist.css";
 import { useWishlist } from "@/app/Context/WishlistContext";
 
 export default function CartPage() {
-  const { addToCart  } = useCart();
+  const { addToCart, cartError } = useCart();
+  console.log("test70",cartError)
 
   const { wishlist, toggleWishlist, totalPages, currentPage, changePage  } = useWishlist();
 
 
   return (
-    <div className="cart-page">
+    <div className="cart-page wishlist">
       <h1 className="title"> My Wishlist</h1>
 
       {wishlist.length === 0 ? (
@@ -60,14 +61,19 @@ export default function CartPage() {
           {isLow && (
             <p className="stock-low">Low Stock ⚠️</p>
           )}
-
-          <button
+          { !isOut && 
+              <button
             className="Add-to-card-button"
             disabled={isOut}
             onClick={() => addToCart(item)}
           >
-            {isOut ? "Not Available" : "Add to cart"}
+         Add to cart
           </button>
+}
+        {cartError[item._id] && (
+            <p className="error"style={{color:"red" , fontSize:"14px"}}>{cartError[item._id]}which in the cart</p>
+          )}    
+    
         </div>
 
         <button

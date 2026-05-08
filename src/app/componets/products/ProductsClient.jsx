@@ -8,9 +8,9 @@ import { useWishlist, usewishlist } from "@/app/Context/WishlistContext";
 
 export default function Getproducts({ products }) {
   const [category, setCategory] = useState("all");
-  const { addToCart } = useCart();
+  const { addToCart ,cartError} = useCart();
   const { toggleWishlist, wishlist } = useWishlist();
-  
+
  
   
 
@@ -69,12 +69,13 @@ export default function Getproducts({ products }) {
                     out of stock
                   </span>
                   :
-                  <p className="Add-to-card" onClick={() => addToCart(item)}>+</p>
+                  <button disabled={ cartError[item._id] } className="Add-to-card" onClick={() => addToCart(item)}>+</button>
                   
                }
                   
                    
               </div>
+              {cartError[item._id]  && <p className="error" style={{color:"red"}}>{cartError[item._id]} which in the cart</p>}
          
    
 

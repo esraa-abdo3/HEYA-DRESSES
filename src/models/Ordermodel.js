@@ -49,6 +49,9 @@ const orderSchema = new mongoose.Schema(
       type: Number,
       required: true,
     },
+    promocode: {
+      type:String,
+    },
 
     transactionId: {
       type: String,
@@ -59,6 +62,7 @@ const orderSchema = new mongoose.Schema(
       enum: ["stripe", "paypal", "wallet", "manual"],
       default: "manual",
     },
+
   },
   { timestamps: true }
 );

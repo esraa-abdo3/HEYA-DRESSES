@@ -44,15 +44,15 @@ body {
 
 .cart-page {
   width: 70%;
-  margin: 70px auto;
-  padding: 40px 24px 120px;
-  background-color: #ffffff;
+  margin: 0px auto;
+  padding: 70px 24px 120px;
+
   border-radius: 8px;
   -webkit-border-radius: 8px;
   -moz-border-radius: 8px;
   -ms-border-radius: 8px;
   -o-border-radius: 8px;
-  box-shadow: 0 10px 10px rgba(0, 0, 0, 0.217);
+ 
 }
 .cart-page .Add-to-card-button{
   padding:7px 10px;

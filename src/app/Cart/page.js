@@ -3,7 +3,7 @@
 import { useCart } from "../Context/cartcontext";
 import Link from "next/link";
 import "./page.css";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import axios from "axios";
 import { useRouter } from "next/navigation";
 import { RiChatDeleteFill } from "react-icons/ri";
@@ -11,8 +11,8 @@ import { RiChatDeleteFill } from "react-icons/ri";
 import { useWishlist } from "../Context/WishlistContext";
 
 export default function CartPage() {
-  const { cart, removeFromCart, updateQuantity, setCart } = useCart();
-  
+  const { cart, removeFromCart, updateQuantity, setCart, allpromocodes } = useCart();
+
   const { setWishlist } = useWishlist();
   const router = useRouter();
   const [form, setForm] = useState({
@@ -34,8 +34,21 @@ export default function CartPage() {
   return acc + price * item.quantity;
    }, 0)
   )
+  const [originalTotal, setOriginalTotal] = useState(total);
+  
+  const [isPromoApplied, setIsPromoApplied] = useState(false);
+  const [outofstock, setoutofstock] = useState(0);
+function detectStock() {
+  const count = cart.filter(
+    (e) => e.productId.stock === 0
+  ).length;
 
-   const [isPromoApplied, setIsPromoApplied] = useState(false);
+  setoutofstock(count);
+  }
+ 
+  useEffect(() => {
+  detectStock()   
+  },[])
 const fetchWishlist = async () => {
   try {
     const res = await axios.get("/api/Wishlist");
@@ -73,26 +86,35 @@ const handleCheckout = async (e) => {
    seterror("Please enter All fields");
     return;
   }
-
+  if (outofstock > 0) {
+    seterror("please remove outstocked items before checkout");
+    return
+ }
   seterror("");
      setloading(true);
-   
+   const payload = {
+  items: cart.map((item) => ({
+    productId: item.productId._id,
+    quantity: item.quantity,
+  })),
+  address: {
+    name: form.name,
+    street: form.street,
+    building: form.building,
+    phone: form.phone,
+  },
+  paymentMethod: form.paymentMethod,
+};
+
+if (isPromoApplied && promo) {
+  payload.promoCode = promo;
+  }
+
+
 
 
   try {
-    const res = await axios.post("/api/Order", {
-      items: cart.map((item) => ({
-        productId: item.productId._id,
-        quantity: item.quantity,
-      })),
-      address: {
-        name: form.name,
-        street: form.street,
-        building: form.building,
-        phone: form.phone,
-      },
-      paymentMethod: form.paymentMethod,
-    });
+    const res = await axios.post("/api/Order", payload);
     
 
     // 💳 Stripe
@@ -100,10 +122,13 @@ const handleCheckout = async (e) => {
       window.location.href = res.data.url;
       return;
     }
+     
     await fetchWishlist();
+  
     router.push("success")
+       setCart([]);
 
-    setCart([]);
+  
 
 
      
@@ -118,44 +143,36 @@ const handleCheckout = async (e) => {
   }
    };
 const applyPromo = () => {
-
   if (isPromoApplied) {
-      setPromoMessage("Promo already applied");
-    setTimeout(() => {
-        setPromoMessage("");
-    }, 2000);
-  
+    setPromoMessage("Promo already applied");
+    setTimeout(() => setPromoMessage(""), 2000);
     return;
   }
 
-  let discountValue = 0;
+  const foundPromo = allpromocodes.find(
+    (p) => p.name.toLowerCase() === promo.toLowerCase()
+  );
 
-  if (promo.toLowerCase() === "sale10") {
-    discountValue = 10;
- 
-   
-  } else if (promo.toLowerCase() === "fashion20") {
-    discountValue = 20;
-  
-     
-  } else {
+  if (!foundPromo) {
     setPromoMessage("Invalid promo code");
-    setTimeout(() => {
-      setPromoMessage("")
-      
-    }, 2000);
+    setTimeout(() => setPromoMessage(""), 2000);
     return;
   }
+
+  const discountValue = foundPromo.discount;
 
   setDiscount(discountValue);
 
-  settotal((prev) => prev - discountValue);
+const newTotal = originalTotal - (originalTotal * discountValue / 100);
+settotal(newTotal);
+setIsPromoApplied(true);
 
-  setIsPromoApplied(true);
-   };
+  setPromoMessage("Promo applied successfully");
+  setTimeout(() => setPromoMessage(""), 2000);
+};
 
   const removePromo = () => {
-  settotal((prev)=> prev + discount)
+  settotal(originalTotal);
     setIsPromoApplied(false);
      setPromoMessage("Promo removed");
         setTimeout(() => {
@@ -207,20 +224,26 @@ const applyPromo = () => {
                   </p>
 
                   {/* QUANTITY CONTROL */}
-                  <div className="qty">
+                  {item.productId.stock === 0 ? 
+       <div style={{ color: "red", fontWeight: "bold" }}>
+    Out of Stock
+  </div>
+                   :     <div className="qty">
                     <button onClick={() => {
-                    
-                      updateQuantity(item.productId._id, "dec");
+                   updateQuantity(item.productId._id, "dec");
                     }}
-                 
                     >
                       -
                     </button>
 
-                    <span>{item.quantity}</span>
+                    <span>{item.quantity  > item.productId.stock ?  item.productId.stock:item.quantity}</span>
 
                     <button
                       onClick={() => {
+                         if (item.quantity === item.productId.stock) {
+                   alert("⚠️ You reached the stock limit");
+                  return;
+                      }
                         updateQuantity(item.productId._id, "inc");
                       
                     }}
@@ -228,13 +251,17 @@ const applyPromo = () => {
                     >
                       +
                     </button>
-                  </div>
+                  </div>}
+              
                 </div>
 
                 {/* REMOVE */}
                 <button
                   className="remove"
-                  onClick={() => removeFromCart(item.productId._id)}
+                  onClick={() => {
+                    console.log("removed")
+                    removeFromCart(item.productId._id)
+                  }}
                 >
                   🗑
                 </button>

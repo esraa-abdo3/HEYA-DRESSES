@@ -56,7 +56,7 @@ export async function POST(req) {
   });
         const token = jwt.sign({ id: user._id, email: user.email}, process.env.JWT_SECRET,{ expiresIn: "7d" }
   );
-console.log("user", user);
+
 
   return Response.json(
       { message: "User created successfully", data: { user } ,token},

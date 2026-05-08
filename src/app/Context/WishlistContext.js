@@ -10,20 +10,11 @@ export const WishlistProvider = ({ children, initiallist = [] }) => {
 
   const [totalPages, settotalpage] = useState(initiallist.totalPages);
   const [currentPage, setcurrentPage] = useState(initiallist.currentPage);
-  console.log(totalPages);
-  console.log(currentPage)
+
  
 
   const [wishlist, setWishlist] = useState(initiallist.items);
  
-//   const changePage = async (page) => {
-//   const res = await fetch(`/api/Wishlist?page=${page}&limit=3`);
-//   const data = await res.json();
-
-//     setWishlist(data.items);
-//     settotalpage(data.totalPages);
-//     setcurrentPage(data.currentPage)
-// };
 const changePage = async (page) => {
 
   setcurrentPage(page)

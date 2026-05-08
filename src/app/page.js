@@ -1,4 +1,5 @@
 
+import Link from "next/link";
 import ScrollToProducts from "./componets/ScrollToProducts/ScrollToProducts";
 import Products from "./products/productclient"
 export default function Home() {
@@ -20,7 +21,10 @@ export default function Home() {
           Because you deserve to shine.
         </p>
         <div className="hero-buttons">
-          <button className="btn-primary">Sign up</button>
+            <button className="btn-primary">
+              <Link href={"Auth/Signup"} style={{textDecoration:"none", color:"white"}}>Sign up</Link>
+       
+            </button>
          <ScrollToProducts/>
         </div>
         </div>

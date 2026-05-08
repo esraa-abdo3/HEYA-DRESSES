@@ -172,6 +172,8 @@
   border-radius: 8px;
   cursor: pointer !important;
   transition: 0.3s;
+  outline: none;
+  border: none;
 }
 
 .Add-to-card:hover {
@@ -186,12 +188,15 @@
     width: 180px;
     height: 450px;
   }
+  .products .container .cards .item .action{
+    flex-wrap: wrap;
+  }
 }
 span.outofstock{
   text-transform: capitalize;
   font-weight: bold;
-  font-size: 16px !important;
-  background-color: gray;
+  font-size: 14px !important;
+  background-color: rgba(128, 128, 128, 0.511);
   color: white !important;
   border-radius:8px ;
   -webkit-border-radius:8px ;
