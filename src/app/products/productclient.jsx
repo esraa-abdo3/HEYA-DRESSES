@@ -4,7 +4,7 @@ import Getproducts from "../componets/products/ProductsClient";
 
 
 async function getProducts() {
-  const res = await fetch("http://localhost:3000/api/Products", {
+  const res = await fetch("api/Products", {
     cache: "no-store",
   });
 

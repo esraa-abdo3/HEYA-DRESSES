@@ -66,7 +66,7 @@ export default function SignupPage() {
       
     }
     try {
-      let res = await axios.post("http://localhost:3000/api/auth/register", body)
+      let res = await axios.post("api/auth/register", body)
       console.log(res)
       setLoading(false)
       Cookies.set("token", res.data.token, { expires: 1 });
