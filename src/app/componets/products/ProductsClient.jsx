@@ -11,10 +11,6 @@ export default function Getproducts({ products }) {
   const { addToCart ,cartError} = useCart();
   const { toggleWishlist, wishlist } = useWishlist();
 
- 
-  
-
-
   const filteredProducts =  category === "all" ? products : products.filter((p) => p.category.name === category);
   return (
     <div className="products">

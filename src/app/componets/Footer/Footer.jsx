@@ -37,9 +37,9 @@ export default function Footer() {
                 <div className="footer-col">
                     <h4>SHOP</h4>
                     <ul>
-                        <li><Link href="#new-arrivals">New Arrivals</Link></li>
-                        <li><Link href="#best-sellers">Best Sellers</Link></li>
-                        <li><Link href="/products">All Collections</Link></li>
+                        <li><Link href="/">New Arrivals</Link></li>
+                        <li><Link href="/">Best Sellers</Link></li>
+                        <li><Link href="/">All Collections</Link></li>
                         <li><Link href="/Wishlist">Wishlist</Link></li>
                     </ul>
                 </div>
@@ -48,10 +48,10 @@ export default function Footer() {
                 <div className="footer-col">
                     <h4>HELP</h4>
                     <ul>
-                        <li><Link href="/my-orders">My Orders</Link></li>
+                        <li><Link href="/Myorders">My Orders</Link></li>
                         <li><Link href="#">Shipping & Returns</Link></li>
                         <li><Link href="#">Size Guide</Link></li>
-                        <li><Link href="/contact">Contact Us</Link></li>
+                        <li><Link href="/">Contact Us</Link></li>
                     </ul>
                 </div>
 

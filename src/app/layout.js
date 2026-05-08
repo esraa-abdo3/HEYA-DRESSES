@@ -72,7 +72,7 @@ export default async function RootLayout({ children }) {
   const cart = await getInitialCart();
   const wish = await getInitialwishlist();
   const promocodes = await getAllpromocodes();
-
+const cleanpromocodes= JSON.parse(JSON.stringify(promocodes));
   const cleanCart = JSON.parse(JSON.stringify(cart));
   const cleanWish = JSON.parse(JSON.stringify(wish));
 
@@ -86,7 +86,7 @@ export default async function RootLayout({ children }) {
           <GuestInit isGuest={isGuest} />
 
           <WishlistProvider initiallist={cleanWish}>
-            <CartProvider initialCart={cleanCart} promocodes={promocodes}>
+            <CartProvider initialCart={cleanCart} promocodes={cleanpromocodes}>
               <Header />
               <Navbar />
 

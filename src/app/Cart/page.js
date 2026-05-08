@@ -196,7 +196,7 @@ const removePromo = () => {
 
           <div className="cart-grid">
             {cart.map((item) => (
-              <div className="cart-item" key={item._id}>
+              <div className="cart-item" key={item.productId._id}>
                 
                 {/* IMAGE */}
                 <img

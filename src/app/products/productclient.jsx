@@ -1,6 +1,5 @@
 
 
-import Homepagee from "../componets/Herrosrction/Herosection";
 import Getproducts from "../componets/products/ProductsClient";
 
 
@@ -21,7 +20,7 @@ export default async function Page() {
 
   return (
     <>
-      <Homepagee />
+     
        < Getproducts products = { products } />;
     </>
   )

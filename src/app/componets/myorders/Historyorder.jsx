@@ -5,6 +5,7 @@ import { FaSortAmountDown, FaSortAmountUp, FaMoneyBillWave, FaCoins } from "reac
 import { FaArrowTrendDown } from "react-icons/fa6";
 import { FaArrowTrendUp } from "react-icons/fa6";
 import { useCart } from "@/app/Context/cartcontext";
+import Link from "next/link";
 import axios from "axios";
 export default function HistoryOrder({ orders }) {
   const [sortType, setSortType] = useState("newest"); 
@@ -195,11 +196,14 @@ backgroundRepeat: "no-repeat"
                   <div style={{ fontSize: 14, fontWeight: 500, marginBottom: 4 }}>Product #{item.productId._id}</div>
                   <div style={{ fontSize: 12, color: "#777" }}>Qty: {item.quantity} · Unit price: ${item.price.toLocaleString()}</div>
                   <div style={{ display: "flex", gap: 10, marginTop: 8 }}>
-                    <button disabled={item.productId.stock === 0 ? "true":"false"} style={{ fontSize: 12, color: item.productId.stock ===0? "red":"#3b4cca", background: "none", border: "none", cursor: item.productId.stock === 0 ? "not-allowed":"pointer", padding: 0 }} onClick={() => {
+                    <button disabled={item.productId.stock === 0} style={{ fontSize: 12, color: item.productId.stock ===0? "red":"#3b4cca", background: "none", border: "none", cursor: item.productId.stock === 0 ? "not-allowed":"pointer", padding: 0 }} onClick={() => {
                       addToCart(item.productId)
+                      console.log(item.productId)
                     }}> { item.productId.stock ===0? "out  of stock" :"↻ Buy it again"}</button>
                     <span style={{ color: "#ddd" }}>|</span>
-                    <button style={{ fontSize: 12, color: "#3b4cca", background: "none", border: "none", cursor: "pointer", padding: 0 }}>👁 View Product</button>
+                    <Link href={`/`}>
+                      <button style={{ fontSize: 12, color: "#3b4cca", background: "none", border: "none", cursor: "pointer", padding: 0 }}>👁 View Product</button></Link>
+                  
                   </div>
                 </div>
                 <div style={{ fontSize: 14, fontWeight: 500 }}>${(item.price * item.quantity).toLocaleString()}</div>

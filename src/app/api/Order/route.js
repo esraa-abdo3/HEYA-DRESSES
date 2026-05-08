@@ -97,7 +97,7 @@ export async function POST(req) {
 }
 
       // send email 
-      await fetch("https://esraaabdo.app.n8n.cloud/webhook-test/c47abab5-2ac1-46f8-931d-0bf98aa898d8", {
+      await fetch("https://esraaabdo.app.n8n.cloud/webhook/c47abab5-2ac1-46f8-931d-0bf98aa898d8", {
   method: "POST",
   headers: {
     "Content-Type": "application/json",

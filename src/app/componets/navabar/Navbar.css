@@ -37,6 +37,7 @@
   color: white;
   text-decoration: none;
   position: relative;
+   display: inline-block;
 }
 
 .links a::after {
@@ -48,6 +49,9 @@
   width: 0;
   background-color: currentColor;
   transition: width 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.links a:hover::after{
+    width: 100%;
 }
 .links a.active::after {
   width: 100%;
@@ -136,9 +140,12 @@
     -o-transition: 0.3s;
 }
 .sidebar .logoname{
-    color: #a10e30;
+    color: #025c54;
+    font-size: bold;
     flex: none;
     text-align: start;
+    padding-bottom: 5px;
+    border-bottom: 2px solid #025c54;
 }
 
 .sidebar.active {
@@ -369,6 +376,8 @@
     -ms-transition:0.3s ;
     -o-transition:0.3s ;
     color: white !important;
+    outline: none !important;
+    border: none !important;
 
 }
 .Navbar .login:hover{

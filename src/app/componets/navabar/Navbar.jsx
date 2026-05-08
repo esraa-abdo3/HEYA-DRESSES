@@ -46,7 +46,7 @@ export default function Navbar() {
                     <ul className="links">
                         <li><Link href={"/"} className={pathname === "/" ? "active" : ""} >Home</Link></li>
                            <li><Link href={"/Myorders"} className={pathname === "/Myorders" ? "active" : ""} >my orders</Link></li>
-                        <li><Link href={"/"} >About us</Link></li>
+                        {/* <li><Link href={"/"} >About us</Link></li> */}
 
                  
                     </ul>
@@ -107,7 +107,7 @@ export default function Navbar() {
                     <li><Link href="/" onClick={() => setOpen(false)}>Home</Link></li>
                    
                     <li><Link href="/Myorders" onClick={() => setOpen(false)}>My orders</Link></li>
-                     <li><Link href="/about" onClick={() => setOpen(false)}>About</Link></li>
+                     {/* <li><Link href="/about" onClick={() => setOpen(false)}>About</Link></li> */}
                 </ul>
                 <div>
 
