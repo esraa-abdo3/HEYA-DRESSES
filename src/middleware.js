@@ -2,21 +2,25 @@ import { NextResponse } from "next/server";
 import { getToken } from "next-auth/jwt";
 
 export async function middleware(req) {
+  const { pathname } = req.nextUrl;
+
+  // 🔥 مهم جدًا: استثناء Stripe webhook
+  if (pathname.startsWith("/api/stripe/webhook")) {
+    return NextResponse.next();
+  }
+
   const token = await getToken({
     req,
     secret: process.env.NEXTAUTH_SECRET,
   });
 
-  const isDashboard = req.nextUrl.pathname.startsWith("/dashboard");
+  const isDashboard = pathname.startsWith("/Dashboard");
 
-  // لو داخل داشبورد
   if (isDashboard) {
-    // مفيش login
     if (!token) {
       return NextResponse.redirect(new URL("/forbidden", req.url));
     }
 
-    // مش admin
     if (token.role !== "admin") {
       return NextResponse.redirect(new URL("/forbidden", req.url));
     }
@@ -24,8 +28,3 @@ export async function middleware(req) {
 
   return NextResponse.next();
 }
-
-// يطبق على الداشبورد بس
-export const config = {
-  matcher: ["/Dashboard/:path*"],
-};

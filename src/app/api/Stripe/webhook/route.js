@@ -105,6 +105,7 @@
 
 //   return new Response("success", { status: 200 });
 // }
+export const runtime = "nodejs";
 import dbConnect from "@/lib/dbConnect";
 import Order from "@/models/Ordermodel";
 import Cart from "@/models/Cartmodel";
