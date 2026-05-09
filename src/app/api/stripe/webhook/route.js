@@ -77,9 +77,10 @@ export async function POST(req) {
           0
       );
 
-      const email =
-        session.metadata.email ||
-        "guest@guest.com";
+   const email =
+  session.customer_details?.email ||
+  session.metadata.email ||
+  "guest@guest.com";
 
       /*********************************
        * 🧾 PREVENT DUPLICATE ORDERS
