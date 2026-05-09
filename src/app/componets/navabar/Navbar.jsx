@@ -8,7 +8,7 @@ import { useCart } from "@/app/Context/cartcontext";
 import { FaRegHeart } from "react-icons/fa";
 import { useWishlist } from "@/app/Context/WishlistContext";
 import { LuUserRound } from "react-icons/lu";
-import { usePathname } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 
 
 
@@ -16,13 +16,14 @@ export default function Navbar() {
 
     const [open, setOpen] = useState(false);
     const { data: session } = useSession();
-    console.log("session", session)
+   
     const { cart } = useCart();
     const { wishlist } = useWishlist();
     const cartCount = cart.reduce((acc, item) => acc + item.quantity, 0);
     const [dropdownOpen, setDropdownOpen] = useState(false); 
     const dropdownRef = useRef(null);     
-    const pathname=usePathname()
+    const pathname = usePathname()
+    const router = useRouter();
     
     useEffect(() => {
     
@@ -80,7 +81,9 @@ export default function Navbar() {
                                     <button onClick={() =>
                                     {
                                        
-                                          signOut()
+                                        signOut()
+                                        router.push("/")
+                                        
                                         }
                                       
                                     }>
@@ -118,7 +121,8 @@ export default function Navbar() {
     
                             <button className="logout"
                                 onClick={() => {
-   signOut();
+                                    signOut();
+                                    router.push("/")
    setOpen(false);
 }}
                             >

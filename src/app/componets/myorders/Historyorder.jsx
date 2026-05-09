@@ -77,9 +77,12 @@ const totalPages = Math.ceil(sortedOrders.length / ordersPerPage);
       <h2 style={{ fontSize: 22, fontWeight: 700 , textTransform:"uppercase"}}>Your Orders</h2>
   
 
-   
-
-      <div style={{ display: "flex", justifyContent: "end", alignItems: "center", margin: "1.25rem 0", flexWrap: "wrap", gap: 8 }}>
+        {currentOrders.length == 0 ? (
+          <div style={{textAlign:"center", fontWeight:"bold"}}> No Orders For You yet ! </div>
+        ) :
+          (
+            <>
+                   <div style={{ display: "flex", justifyContent: "end", alignItems: "center", margin: "1.25rem 0", flexWrap: "wrap", gap: 8 }}>
     
     <button onClick={() => setSortType("newest")}   style={{
           backgroundColor: "#80808030",
@@ -146,9 +149,8 @@ const totalPages = Math.ceil(sortedOrders.length / ordersPerPage);
   </button>
 
 
-      </div>
-
-      {currentOrders.map((order) => {
+              </div>
+                  {currentOrders.map((order) => {
         const status = getStatusStyle(order.paymentStatus);
         return (
           <div key={order._id} style={{ background: "white", borderRadius: 8, border: "1px solid #eee", marginBottom: 16, overflow: "hidden", boxShadow: "0 2px 8px rgba(0,0,0,0.05)" }}>
@@ -211,8 +213,9 @@ backgroundRepeat: "no-repeat"
             ))}
           </div>
         );
-      })}
-        <div style={{ display: "flex", justifyContent: "center", gap: 10, marginTop: 20 }}>
+                  })}
+              
+                      <div style={{ display: "flex", justifyContent: "center", gap: 10, marginTop: 20 }}>
           {totalPages > 1 &&
           
             Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
@@ -239,6 +242,14 @@ backgroundRepeat: "no-repeat"
        
 
 </div>
+            </>
+          )
+   }
+
+ 
+
+  
+
       </div>
          </div>
     

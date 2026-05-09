@@ -186,7 +186,7 @@ const removePromo = () => {
         <div className="empty">
           <h2>Your cart is empty</h2>
           <p>Start shopping now 🚀</p>
-          <Link href="/products">
+          <Link href="/">
             <button className="btn-shop">Go to Products</button>
           </Link>
         </div>

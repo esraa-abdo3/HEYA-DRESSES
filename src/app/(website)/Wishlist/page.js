@@ -20,7 +20,7 @@ export default function CartPage() {
         <div className="empty">
       <h2>Your wishlist is waiting</h2>
 <p>Add your favorite items and find them here anytime</p>
-          <Link href="/products">
+          <Link href="/">
             <button className="btn-shop">Go to Products</button>
           </Link>
         </div>
