@@ -117,12 +117,10 @@ export async function POST(req) {
 
     await dbConnect();
 
-    const sig =
-      req.headers.get(
-        "stripe-signature"
-      );
-
     const body = await req.text();
+    const sig =  req.headers.get("stripe-signature" );
+
+
 
     let event;
 
@@ -131,8 +129,7 @@ export async function POST(req) {
         stripe.webhooks.constructEvent(
           body,
           sig,
-          process.env
-            .STRIPE_WEBHOOK_SECRET
+          process.env.STRIPE_WEBHOOK_SECRET
         );
     } catch (err) {
       console.log(
@@ -147,6 +144,8 @@ export async function POST(req) {
         }
       );
     }
+    console.log("BODY:", body);
+
 
     /*********************************
      * 💳 PAYMENT SUCCESS
