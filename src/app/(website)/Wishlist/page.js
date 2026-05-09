@@ -1,6 +1,6 @@
 "use client";
 
-import { useCart } from "../Context/cartcontext";
+import { useCart } from "../../Context/cartcontext";
 import Link from "next/link";
 import "./wishlist.css";
 import { useWishlist } from "@/app/Context/WishlistContext";

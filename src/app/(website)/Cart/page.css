@@ -716,6 +716,7 @@ p.error{
   -ms-border-radius: 8px;
   -o-border-radius: 8px;
   border: 1px solid #eee;
+  font-size: 16px;
 }
 .payment-method{
     border-top: 1px solid #eee;

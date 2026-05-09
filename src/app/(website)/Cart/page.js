@@ -1,6 +1,6 @@
 "use client";
 
-import { useCart } from "../Context/cartcontext";
+import { useCart } from "../../Context/cartcontext";
 import Link from "next/link";
 import "./page.css";
 import { useEffect, useState } from "react";
@@ -8,7 +8,7 @@ import axios from "axios";
 import { useRouter } from "next/navigation";
 import { RiChatDeleteFill } from "react-icons/ri";
 
-import { useWishlist } from "../Context/WishlistContext";
+import { useWishlist } from "../../Context/WishlistContext";
 
 export default function CartPage() {
   const { cart, removeFromCart, updateQuantity, setCart, allpromocodes } = useCart();

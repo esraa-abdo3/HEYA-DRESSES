@@ -1,6 +1,6 @@
 
 import Link from "next/link";
-import ScrollToProducts from "./componets/ScrollToProducts/ScrollToProducts";
+import ScrollToProducts from "../componets/ScrollToProducts/ScrollToProducts";
 import Products from "./products/productclient"
 export default function Home() {
   return (

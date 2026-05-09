@@ -1,7 +1,22 @@
 import dbConnect from "@/lib/dbConnect";
 import Cataroymodel from "@/models/Cataroymodel";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/app/api/auth/[...nextauth]/route";
+function forbidden() {
+  return Response.json(
+    { message: "Forbidden: Admins only" },
+    { status: 403 }
+  );
+}
+async function requireAdmin() {
+  const session = await getServerSession(authOptions);
+  if (!session || session.user?.role !== "admin") return null;
+  return session;
+}
 
 export async function POST(req) {
+       const session = await requireAdmin();
+  if (!session) return forbidden();
 
   await dbConnect();
 
@@ -35,6 +50,8 @@ export async function POST(req) {
   );
 }
 export async function GET() {
+  const session = await requireAdmin();
+  if (!session) return forbidden();
   await dbConnect();
 
   try {

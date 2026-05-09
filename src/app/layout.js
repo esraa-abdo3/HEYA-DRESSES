@@ -55,14 +55,13 @@
 // }
 export const dynamic = "force-dynamic";
 import "./globals.css";
-import Navbar from "./componets/navabar/Navbar";
+
 import AuthProvider from "./providers/AuthProvider";
 import { CartProvider } from "./Context/cartcontext";
 import { getInitialCart } from "./Context/cardserver";
 import { WishlistProvider } from "./Context/WishlistContext";
 import { getInitialwishlist } from "./Context/Wishlistserver";
-import Header from "./componets/Header/Header";
-import Footer from "./componets/Footer/Footer";
+
 import { getAllpromocodes } from "./Context/Promocodeserver";
 import GuestInit from "./prodivders/gestprovider";
 import { getServerSession } from "next-auth";
@@ -87,12 +86,11 @@ const cleanpromocodes= JSON.parse(JSON.stringify(promocodes));
 
           <WishlistProvider initiallist={cleanWish}>
             <CartProvider initialCart={cleanCart} promocodes={cleanpromocodes}>
-              <Header />
-              <Navbar />
+        
 
               {children}
 
-              <Footer />
+         
             </CartProvider>
           </WishlistProvider>
         </AuthProvider>

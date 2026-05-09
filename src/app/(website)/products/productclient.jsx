@@ -1,6 +1,6 @@
 
 
-import Getproducts from "../componets/products/ProductsClient";
+import Getproducts from "../../componets/products/ProductsClient";
 
 
 async function getProducts() {

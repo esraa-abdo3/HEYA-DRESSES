@@ -1,9 +1,23 @@
 import dbConnect from "@/lib/dbConnect";
 import Category from "@/models/Cataroymodel";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/app/api/auth/[...nextauth]/route";
+function forbidden() {
+  return Response.json(
+    { message: "Forbidden: Admins only" },
+    { status: 403 }
+  );
+}
+async function requireAdmin() {
+  const session = await getServerSession(authOptions);
+  if (!session || session.user?.role !== "admin") return null;
+  return session;
+}
 
 export async function GET( req,{ params }) {
   await dbConnect();
-  console.log(params)
+    const session = await requireAdmin();
+  if (!session) return forbidden();
 
  const { id } = await params;
 
@@ -36,6 +50,8 @@ export async function GET( req,{ params }) {
   }
 }
 export async function DELETE(req, { params }) {
+     const session = await requireAdmin();
+  if (!session) return forbidden();
   await dbConnect();
 
  const { id } = await params;
@@ -66,6 +82,8 @@ export async function DELETE(req, { params }) {
   }
 }
 export async function PUT(req, { params }) {
+     const session = await requireAdmin();
+  if (!session) return forbidden();
   await dbConnect();
 
  const { id } = await params;
