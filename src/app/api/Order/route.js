@@ -153,6 +153,7 @@ if (paymentMethod === "credit_card") {
       address: JSON.stringify(address),
       items: JSON.stringify(orderItems),
       discount: discount.toString(),
+      email: session.user.email||"esraaabdalnasserzz@gmail.com",
     },
     line_items: orderItems.map((item) => ({
       price_data: {
@@ -164,8 +165,8 @@ if (paymentMethod === "credit_card") {
       },
       quantity: item.quantity,
     })),
-    success_url: "http://localhost:3000/success",
-    cancel_url: "http://localhost:3000/cancel",
+    success_url: "https://heya-dresses.vercel.app/success",
+    cancel_url: "https://heya-dresses.vercel.app/cancel",
   });
 
   // ✅ مهم جدًا

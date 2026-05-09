@@ -2,6 +2,7 @@ import dbConnect from "@/lib/dbConnect";
 import Order from "@/models/Ordermodel";
 import Cart from "@/models/Cartmodel";
 import { stripe } from "@/lib/stripe";
+import productmodel from "@/models/productmodel";
 
 export async function POST(req) {
   await dbConnect();
@@ -51,6 +52,7 @@ export async function POST(req) {
       transactionId: session.id,
     });
 
+
 if (userId) {
   await Cart.findOneAndUpdate(
     { userId },
@@ -61,7 +63,38 @@ if (userId) {
     { guestId },
     { $set: { items: [] } }
   );
-}
+    }
+
+
+
+       fetch("https://esraaabdo.app.n8n.cloud/webhook/c47abab5-2ac1-46f8-931d-0bf98aa898d8", {
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json",
+  },
+        body: JSON.stringify({
+    email: session.metadata.email ,
+    items: session.metadata.items.map(item => {
+      const product = productmodel.find(p => p._id.toString() === item.productId.toString());
+
+      return {
+        name: product.name,
+        image: product.image,
+        price: item.price,
+        quantity: item.quantity,
+      };
+    }),
+    total: totalPrice,
+    address,
+  }),
+       })
+        .then(() => console.log("✅ SENT TO N8N"))
+  .catch((err) => console.log("❌ N8N ERROR", err));
+
+
+
+
+    
   }
 
   return new Response("success", { status: 200 });
