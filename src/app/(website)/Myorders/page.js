@@ -1,5 +1,5 @@
-import Historyorder from "../componets/myorders/Historyorder";
-import { getMyOrders }  from "../Context/Ordersever";
+import Historyorder from "../../componets/myorders/Historyorder";
+import { getMyOrders }  from "../../Context/Ordersever";
 
 export default async function Myorder() {
 
