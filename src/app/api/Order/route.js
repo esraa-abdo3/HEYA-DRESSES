@@ -153,7 +153,7 @@ if (paymentMethod === "credit_card") {
       address: JSON.stringify(address),
       items: JSON.stringify(orderItems),
       discount: discount.toString(),
-      email: session.user.email||"esraaabdalnasserzz@gmail.com",
+      email: session?.user?.email ?? address?.email ?? "guest@guest.com",
     },
     line_items: orderItems.map((item) => ({
       price_data: {

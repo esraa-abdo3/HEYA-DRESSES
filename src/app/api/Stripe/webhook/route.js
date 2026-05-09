@@ -31,7 +31,20 @@ export async function POST(req) {
 
    const userId = session.metadata.userId || null;
    const guestId = session.metadata.guestId || null;
-    const items = JSON.parse(session.metadata.items);
+    const items = JSON.parse(session.metadata.items || "[]");
+    
+const enrichedItems = await Promise.all(
+  items.map(async (item) => {
+    const product = await productmodel.findById(item.productId);
+
+    return {
+      name: product?.name,
+      image: product?.image,
+      price: item.price,
+      quantity: item.quantity,
+    };
+  })
+);
     const address = JSON.parse(session.metadata.address);
     const discount = Number(session.metadata.discount || 0);
     console.log(discount)
@@ -72,22 +85,14 @@ if (userId) {
   headers: {
     "Content-Type": "application/json",
   },
-        body: JSON.stringify({
-    email: session.metadata.email ,
-    items: session.metadata.items.map(item => {
-      const product = productmodel.find(p => p._id.toString() === item.productId.toString());
-
-      return {
-        name: product.name,
-        image: product.image,
-        price: item.price,
-        quantity: item.quantity,
-      };
-    }),
-    total: totalPrice,
-    address,
-  }),
-       })
+      body: JSON.stringify({
+  email: session.metadata.email || "esraaabdalnasserzz@gmail.com",
+  items: enrichedItems,
+  total: totalPrice,
+  address,
+})
+  })
+      
         .then(() => console.log("✅ SENT TO N8N"))
   .catch((err) => console.log("❌ N8N ERROR", err));
 
