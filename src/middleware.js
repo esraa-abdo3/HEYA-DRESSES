@@ -4,7 +4,7 @@ import { getToken } from "next-auth/jwt";
 export async function middleware(req) {
   const { pathname } = req.nextUrl;
 
-  // 🔥 مهم جدًا: استثناء Stripe webhook
+
   if (pathname.startsWith("/api/stripe/webhook")) {
     return NextResponse.next();
   }
