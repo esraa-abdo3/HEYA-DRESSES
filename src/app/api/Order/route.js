@@ -8,28 +8,231 @@ import Cartmodel from "@/models/Cartmodel";
 import PromoCode from "@/models/Promocodemodel";
 
 
-export async function POST(req) {
-  console.log("start");
-  await dbConnect();
- // first step authorization
-  const session = await getServerSession(authOptions);
-  const userId = session?.user?.id || null;
-  console.log("my id", userId)
+// export async function POST(req) {
+//   console.log("start");
+//   await dbConnect();
+//  // first step authorization
+//   const session = await getServerSession(authOptions);
+//   const userId = session?.user?.id || null;
+//   console.log("my id", userId)
   
- // get data from body
-  try {
-    const { items, address, paymentMethod ,promoCode,guestId } = await req.json();
+//  // get data from body
+//   try {
+//     const { items, address, paymentMethod ,promoCode,guestId } = await req.json();
    
 
+//     if (!items || items.length === 0) {
+//       return Response.json({ message: "Cart is empty" }, { status: 400 });
+//     }
+//    // get all proucts ids and all from db
+//     const productIds = items.map((i) => i.productId);
+//     const products = await productmodel.find({ _id: { $in: productIds } });
+//     let totalPrice = 0;
+//     let discount = 0;
+//         if (promoCode) {
+//       const promo = await PromoCode.findOne({
+//         name: promoCode,
+//       });
+
+//       if (promo) {
+//         discount = promo.discount;
+//       }
+//     }
+
+
+
+//  // then get items [id, quantity, price] and totalprice
+//     const orderItems = items.map((item) => {
+//       // then check order exist or not
+//       const product = products.find(
+//         (p) => p._id.toString() === item.productId
+//       );
+//       if (!product) {
+//       throw new Error("Product not found: " + item.productId);
+//       }
+
+
+//       const itemTotal = product.price * item.quantity;
+//       totalPrice += itemTotal;
+
+
+//       return {
+//         productId: product._id,
+//         quantity: item.quantity,
+//         price: product.price,
+//       };
+//     });
+
+  
+
+
+//     totalPrice = totalPrice - (totalPrice * discount / 100);
+//     /*********************************
+//       CASH ON DELIVERY FLOW
+//      *********************************/
+//     if (paymentMethod === "cash") {
+      
+//       const order = await Order.create({
+//        userId: userId ||null,
+//        guestId: userId ? null : guestId,
+//         items: orderItems,
+//         address:address,
+//         paymentMethod,
+//         totalPrice,
+//         paymentStatus: "pending",
+//       });
+//     console.log("order sent", order)
+      
+//    // manage the stock
+//       for (const item of items) {
+//      await productmodel.findByIdAndUpdate(
+//       item.productId,
+//       {
+//       $inc: { stock: -item.quantity }
+//       }
+//      );
+//       }
+//     // clear cart for user
+//    if (userId) {
+//   await Cartmodel.findOneAndDelete({ userId });
+// } else {
+//   await Cartmodel.findOneAndDelete({ guestId });
+// }
+// console.log("feinish");
+//       // send email
+//        fetch("https://esraaabdo.app.n8n.cloud/webhook/c47abab5-2ac1-46f8-931d-0bf98aa898d8", {
+//   method: "POST",
+//   headers: {
+//     "Content-Type": "application/json",
+//   },
+//         body: JSON.stringify({
+//     email: session?.user?.email ?? "guest@guest.com",
+//     items: orderItems.map(item => {
+//       const product = products.find(p => p._id.toString() === item.productId.toString());
+
+//       return {
+//         name: product.name,
+//         image: product.image,
+//         price: item.price,
+//         quantity: item.quantity,
+//       };
+//     }),
+//     total: totalPrice,
+//     address,
+//   }),
+//        })
+//         .then(() => console.log("✅ SENT TO N8N"))
+//   .catch((err) => console.log("❌ N8N ERROR", err));
+//       console.log("📩 AFTER N8N REQUEST");
+//       return Response.json({ order });
+//     }
+
+//     /*********************************
+//      * 💳 STRIPE FLOW
+//      *********************************/
+
+// if (paymentMethod === "credit_card") {
+//   let stripeDiscounts = [];
+
+//   if (discount > 0) {
+//     const coupon = await stripe.coupons.create({
+//       percent_off: discount,
+//       duration: "once",
+//     });
+
+//     stripeDiscounts = [{ coupon: coupon.id }];
+//   }
+
+//   const sessionStripe = await stripe.checkout.sessions.create({
+//     payment_method_types: ["card"],
+//     mode: "payment",
+//     discounts: stripeDiscounts,
+//     metadata: {
+//         userId: userId || null,
+//        guestId: userId ? null : guestId,
+//       address: JSON.stringify(address),
+//       items: JSON.stringify(orderItems),
+//       discount: discount.toString(),
+//       email: session?.user?.email ?? address?.email ?? "guest@guest.com",
+//     },
+//     line_items: orderItems.map((item) => ({
+//       price_data: {
+//         currency: "egp",
+//         product_data: {
+//           name: item.productId.toString(),
+//         },
+//         unit_amount: item.price * 100,
+//       },
+//       quantity: item.quantity,
+//     })),
+//     success_url: "https://heya-dresses.vercel.app/success",
+//     cancel_url: "https://heya-dresses.vercel.app/cancel",
+//   });
+
+//   // ✅ مهم جدًا
+//   return Response.json({ url: sessionStripe.url });
+// }
+//   } catch (error) {
+// return Response.json(
+//   {
+//     message: error.message,
+//     stack: error.stack
+//   },
+//   { status: 500 }
+// );
+//   }
+// }
+
+
+export async function POST(req) {
+  try {
+    console.log("🚀 ORDER API START");
+
+    await dbConnect();
+
+    /*********************************
+     * 🔐 AUTH
+     *********************************/
+    const session = await getServerSession(authOptions);
+
+    const userId = session?.user?.id || null;
+    const userEmail =
+      session?.user?.email || "guest@guest.com";
+
+    /*********************************
+     * 📦 REQUEST DATA
+     *********************************/
+    const {
+      items,
+      address,
+      paymentMethod,
+      promoCode,
+      guestId,
+    } = await req.json();
+
     if (!items || items.length === 0) {
-      return Response.json({ message: "Cart is empty" }, { status: 400 });
+      return Response.json(
+        { message: "Cart is empty" },
+        { status: 400 }
+      );
     }
-   // get all proucts ids and all from db
+
+    /*********************************
+     * 🛍 GET PRODUCTS
+     *********************************/
     const productIds = items.map((i) => i.productId);
-    const products = await productmodel.find({ _id: { $in: productIds } });
+
+    const products = await productmodel.find({
+      _id: { $in: productIds },
+    });
+
     let totalPrice = 0;
     let discount = 0;
-        if (promoCode) {
+
+    /*********************************
+     * 🎟 PROMO CODE
+     *********************************/
+    if (promoCode) {
       const promo = await PromoCode.findOne({
         name: promoCode,
       });
@@ -39,22 +242,24 @@ export async function POST(req) {
       }
     }
 
-
-
- // then get items [id, quantity, price] and totalprice
+    /*********************************
+     * 🧾 ORDER ITEMS
+     *********************************/
     const orderItems = items.map((item) => {
-      // then check order exist or not
       const product = products.find(
         (p) => p._id.toString() === item.productId
       );
+
       if (!product) {
-      throw new Error("Product not found: " + item.productId);
+        throw new Error(
+          "Product not found: " + item.productId
+        );
       }
 
+      const itemTotal =
+        product.price * item.quantity;
 
-      const itemTotal = product.price * item.quantity;
       totalPrice += itemTotal;
-
 
       return {
         productId: product._id,
@@ -63,126 +268,203 @@ export async function POST(req) {
       };
     });
 
-  
-
-
-    totalPrice = totalPrice - (totalPrice * discount / 100);
     /*********************************
-      CASH ON DELIVERY FLOW
+     * 💰 APPLY DISCOUNT
+     *********************************/
+    totalPrice =
+      totalPrice -
+      (totalPrice * discount) / 100;
+
+    /*********************************
+     * 💵 CASH FLOW
      *********************************/
     if (paymentMethod === "cash") {
-      
       const order = await Order.create({
-       userId: userId ||null,
-       guestId: userId ? null : guestId,
+        userId: userId || null,
+        guestId: userId ? null : guestId,
         items: orderItems,
-        address:address,
-        paymentMethod,
+        address,
+        paymentMethod: "cash",
         totalPrice,
         paymentStatus: "pending",
       });
-    console.log("order sent", order)
-      
-   // manage the stock
-      for (const item of items) {
-     await productmodel.findByIdAndUpdate(
-      item.productId,
-      {
-      $inc: { stock: -item.quantity }
-      }
-     );
-      }
-    // clear cart for user
-   if (userId) {
-  await Cartmodel.findOneAndDelete({ userId });
-} else {
-  await Cartmodel.findOneAndDelete({ guestId });
-}
-console.log("feinish");
-      // send email
-       fetch("https://esraaabdo.app.n8n.cloud/webhook/c47abab5-2ac1-46f8-931d-0bf98aa898d8", {
-  method: "POST",
-  headers: {
-    "Content-Type": "application/json",
-  },
-        body: JSON.stringify({
-    email: session?.user?.email ?? "guest@guest.com",
-    items: orderItems.map(item => {
-      const product = products.find(p => p._id.toString() === item.productId.toString());
 
-      return {
-        name: product.name,
-        image: product.image,
-        price: item.price,
-        quantity: item.quantity,
-      };
-    }),
-    total: totalPrice,
-    address,
-  }),
-       })
-        .then(() => console.log("✅ SENT TO N8N"))
-  .catch((err) => console.log("❌ N8N ERROR", err));
-      console.log("📩 AFTER N8N REQUEST");
-      return Response.json({ order });
+      /*********************************
+       * 📦 UPDATE STOCK
+       *********************************/
+      for (const item of items) {
+        await productmodel.findByIdAndUpdate(
+          item.productId,
+          {
+            $inc: {
+              stock: -item.quantity,
+            },
+          }
+        );
+      }
+
+      /*********************************
+       * 🛒 CLEAR CART
+       *********************************/
+      if (userId) {
+        await Cartmodel.findOneAndUpdate(
+          { userId },
+          { $set: { items: [] } }
+        );
+      } else if (guestId) {
+        await Cartmodel.findOneAndUpdate(
+          { guestId },
+          { $set: { items: [] } }
+        );
+      }
+
+      /*********************************
+       * 📧 SEND EMAIL
+       *********************************/
+      try {
+        await fetch(
+          "https://esraaabdo.app.n8n.cloud/webhook/c47abab5-2ac1-46f8-931d-0bf98aa898d8",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type":
+                "application/json",
+            },
+            body: JSON.stringify({
+              email: userEmail,
+
+              items: orderItems.map((item) => {
+                const product = products.find(
+                  (p) =>
+                    p._id.toString() ===
+                    item.productId.toString()
+                );
+
+                return {
+                  name: product?.name,
+                  image: product?.image,
+                  price: item.price,
+                  quantity: item.quantity,
+                };
+              }),
+
+              total: totalPrice,
+              address,
+            }),
+          }
+        );
+
+        console.log(
+          "✅ EMAIL SENT FOR CASH ORDER"
+        );
+      } catch (err) {
+        console.log(
+          "❌ EMAIL ERROR",
+          err
+        );
+      }
+
+      return Response.json({
+        success: true,
+        order,
+      });
     }
 
     /*********************************
      * 💳 STRIPE FLOW
      *********************************/
+    if (paymentMethod === "credit_card") {
+      let stripeDiscounts = [];
 
-if (paymentMethod === "credit_card") {
-  let stripeDiscounts = [];
+      if (discount > 0) {
+        const coupon =
+          await stripe.coupons.create({
+            percent_off: discount,
+            duration: "once",
+          });
 
-  if (discount > 0) {
-    const coupon = await stripe.coupons.create({
-      percent_off: discount,
-      duration: "once",
-    });
+        stripeDiscounts = [
+          {
+            coupon: coupon.id,
+          },
+        ];
+      }
 
-    stripeDiscounts = [{ coupon: coupon.id }];
-  }
+      const sessionStripe =
+        await stripe.checkout.sessions.create({
+          payment_method_types: ["card"],
 
-  const sessionStripe = await stripe.checkout.sessions.create({
-    payment_method_types: ["card"],
-    mode: "payment",
-    discounts: stripeDiscounts,
-    metadata: {
-        userId: userId || null,
-       guestId: userId ? null : guestId,
-      address: JSON.stringify(address),
-      items: JSON.stringify(orderItems),
-      discount: discount.toString(),
-      email: session?.user?.email ?? address?.email ?? "guest@guest.com",
-    },
-    line_items: orderItems.map((item) => ({
-      price_data: {
-        currency: "egp",
-        product_data: {
-          name: item.productId.toString(),
-        },
-        unit_amount: item.price * 100,
+          mode: "payment",
+
+          discounts: stripeDiscounts,
+
+          metadata: {
+            userId: userId || "",
+            guestId: guestId || "",
+            address: JSON.stringify(address),
+            items: JSON.stringify(orderItems),
+            discount: discount.toString(),
+            email: userEmail,
+          },
+
+          line_items: orderItems.map(
+            (item) => {
+              const product = products.find(
+                (p) =>
+                  p._id.toString() ===
+                  item.productId.toString()
+              );
+
+              return {
+                price_data: {
+                  currency: "egp",
+
+                  product_data: {
+                    name:
+                      product?.name ||
+                      "Product",
+                  },
+
+                  unit_amount:
+                    item.price * 100,
+                },
+
+                quantity: item.quantity,
+              };
+            }
+          ),
+
+          success_url:
+            "https://heya-dresses.vercel.app/success",
+
+          cancel_url:
+            "https://heya-dresses.vercel.app/cancel",
+        });
+
+      return Response.json({
+        url: sessionStripe.url,
+      });
+    }
+
+    return Response.json(
+      {
+        message:
+          "Invalid payment method",
       },
-      quantity: item.quantity,
-    })),
-    success_url: "https://heya-dresses.vercel.app/success",
-    cancel_url: "https://heya-dresses.vercel.app/cancel",
-  });
-
-  // ✅ مهم جدًا
-  return Response.json({ url: sessionStripe.url });
-}
+      { status: 400 }
+    );
   } catch (error) {
-return Response.json(
-  {
-    message: error.message,
-    stack: error.stack
-  },
-  { status: 500 }
-);
+    console.log("❌ ORDER ERROR", error);
+
+    return Response.json(
+      {
+        message: error.message,
+        stack: error.stack,
+      },
+      { status: 500 }
+    );
   }
 }
-
 export async function GET(req) {
   await dbConnect();
 
