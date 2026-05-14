@@ -45,7 +45,7 @@ body {
 .cart-page {
   width: 80%;
   margin: 0px auto;
-  padding: 10rem 24px 80px;
+  padding: 50px 24px ;
   min-height: 100vh;
   border-radius:8px ;
   -webkit-border-radius:8px ;
@@ -67,7 +67,7 @@ body {
 }
 @media(max-width:913px){
   .cart-page{
-    padding: 10rem 24px 88px !important;
+    padding: 50px 24px !important;
   }
   .cart-page .flex{
     flex-direction: column;
@@ -597,7 +597,7 @@ p.error{
 
 @media (max-width: 900px) {
   .cart-page {
-    padding: 32px 16px 60px;
+    padding: 50px 16px 60px;
     width: 100%;
   }
 

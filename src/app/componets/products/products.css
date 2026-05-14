@@ -2,7 +2,7 @@
     padding: 70px 0;
 }
 .products .container{
-    width: 70%;
+    width: 80%;
     margin: 0 auto;
 }
 .products .container .filters {
@@ -182,7 +182,7 @@
 }
 @media(max-width:780px){
   .products .container{
-    width: 95%;
+    width: 98%;
   }
  .products .container .cards .item{
     width: 180px;

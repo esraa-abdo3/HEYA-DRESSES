@@ -5,9 +5,9 @@
     box-shadow: 0 2px 5px rgba(0,0,0,0.1);
     padding: 17px 0;
     color: white;
-        position: fixed;
+   position: sticky;
     top: 40px;
-    left: 0;
+  
     width: 100%;
     z-index: 10000000000000;
 
@@ -127,12 +127,12 @@
     width: 200px;
     height: 100vh;
     background: white;
-    padding: 7rem 20px 20px 20px;
+    padding: 20px 20px 20px 20px;
     transition: 0.3s;
     display: flex;
     flex-direction: column;
     gap: 15px;
-    z-index: 1000;
+    z-index: 200000000000000000;
     text-align: start;
     -webkit-transition: 0.3s;
     -moz-transition: 0.3s;

@@ -45,7 +45,7 @@ body {
 .cart-page {
   width: 70%;
   margin: 0px auto;
-  padding: 10rem 24px 120px;
+  padding: 50px 24px ;
 
   border-radius: 8px;
   -webkit-border-radius: 8px;
@@ -552,7 +552,7 @@ body {
 
 @media (max-width: 900px) {
   .cart-page {
-    padding: 32px 16px 60px;
+    padding: 50px 16px ;
     width: 100%;
     margin: 0 auto;
   }
