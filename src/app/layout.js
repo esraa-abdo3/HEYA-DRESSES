@@ -78,6 +78,7 @@ const cleanpromocodes= JSON.parse(JSON.stringify(promocodes));
 
   const session = await getServerSession(authOptions);
   const isGuest = !session?.user;
+    const PIXEL_ID="2496490754109919"
 
   return (
     <html lang="en">
