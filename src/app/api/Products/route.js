@@ -4,20 +4,33 @@ import cloudinary from "@/lib/cloudinary";
 import Cataroymodel from "@/models/Cataroymodel";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
+
 function forbidden() {
   return Response.json(
     { message: "Forbidden: Admins only" },
     { status: 403 }
   );
 }
+
 async function requireAdmin() {
   const session = await getServerSession(authOptions);
   if (!session || session.user?.role !== "admin") return null;
   return session;
 }
 
+function uploadToCloudinary(buffer) {
+  return new Promise((resolve, reject) => {
+    cloudinary.uploader
+      .upload_stream({ folder: "products" }, (err, result) => {
+        if (err) reject(err);
+        else resolve(result);
+      })
+      .end(buffer);
+  });
+}
+
 export async function POST(req) {
-   const session = await requireAdmin();
+  const session = await requireAdmin();
   if (!session) return forbidden();
   await dbConnect();
 
@@ -27,14 +40,25 @@ export async function POST(req) {
     const name = formData.get("name");
     const description = formData.get("description");
     const price = formData.get("price");
-    const stock = formData.get("stock");
+    const priceAfterDiscount = formData.get("priceAfterDiscount");
+
     const category = formData.get("category");
-    const image = formData.get("image");
+    const isNew = formData.get("isNew");
+    const isBestSeller = formData.get("isBestSeller");
 
+  
+    const images = formData.getAll("images").filter((f) => typeof f !== "string");
 
-    if (!name || !price || !category || !image) {
+    if (!name || !price || !category || images.length === 0) {
       return Response.json(
-        { message: "name, price, category, image required" },
+        { message: "name, price, category, images required" },
+        { status: 400 }
+      );
+    }
+
+    if (images.length > 5) {
+      return Response.json(
+        { message: "You can upload a maximum of 5 images" },
         { status: 400 }
       );
     }
@@ -45,19 +69,17 @@ export async function POST(req) {
         { status: 400 }
       );
     }
+
     const categoryExists = await Cataroymodel.findById(category);
-    console.log(categoryExists)
-
-if (!categoryExists) {
-  return Response.json(
-    { message: "Category not found" },
-    { status: 404 }
-  );
-}
-
+    if (!categoryExists) {
+      return Response.json(
+        { message: "Category not found" },
+        { status: 404 }
+      );
+    }
 
     const parsedPrice = Number(price);
-    const parsedStock = Number(stock || 0);
+  
 
     if (isNaN(parsedPrice) || parsedPrice < 0) {
       return Response.json(
@@ -66,32 +88,48 @@ if (!categoryExists) {
       );
     }
 
-    if (isNaN(parsedStock) || parsedStock < 0) {
-      return Response.json(
-        { message: "Stock must be a valid number" },
-        { status: 400 }
-      );
+
+
+    let parsedPriceAfterDiscount = null;
+    if (priceAfterDiscount !== null && priceAfterDiscount !== "") {
+      parsedPriceAfterDiscount = Number(priceAfterDiscount);
+
+      if (isNaN(parsedPriceAfterDiscount) || parsedPriceAfterDiscount < 0) {
+        return Response.json(
+          { message: "priceAfterDiscount must be a valid number" },
+          { status: 400 }
+        );
+      }
+
+      if (parsedPriceAfterDiscount >= parsedPrice) {
+        return Response.json(
+          { message: "priceAfterDiscount must be less than price" },
+          { status: 400 }
+        );
+      }
     }
 
-    const bytes = await image.arrayBuffer();
-    const buffer = Buffer.from(bytes);
 
-    const uploadResult = await new Promise((resolve, reject) => {
-      cloudinary.uploader
-        .upload_stream({ folder: "products" }, (err, result) => {
-          if (err) reject(err);
-          else resolve(result);
-        })
-        .end(buffer);
-    });
+    const uploadResults = await Promise.all(
+      images.map(async (imageFile) => {
+        const bytes = await imageFile.arrayBuffer();
+        const buffer = Buffer.from(bytes);
+        return uploadToCloudinary(buffer);
+      })
+    );
+
+    const imageUrls = uploadResults.map((r) => r.secure_url);
 
     const product = await Product.create({
       name: name.trim(),
       description: description || "",
       price: parsedPrice,
-      stock: parsedStock,
+      priceAfterDiscount: parsedPriceAfterDiscount,
+      
       category: category.trim(),
-      image: uploadResult.secure_url,
+      images: imageUrls,
+      isNew: isNew === "true",
+      isBestSeller: isBestSeller === "true",
     });
 
     return Response.json(
@@ -105,12 +143,12 @@ if (!categoryExists) {
     );
   }
 }
+
 export async function GET() {
   await dbConnect();
 
   try {
-    const Products = await Product.find().populate("category");;
-
+    const Products = await Product.find().populate("category");
 
     return Response.json(
       {

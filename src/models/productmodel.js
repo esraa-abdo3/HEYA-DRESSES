@@ -18,14 +18,31 @@ const productSchema = new mongoose.Schema(
       required: true,
     },
 
-    image: {
-      type: String, 
+    priceAfterDiscount: {
+      type: Number,
+      default: null,
+      validate: {
+        validator: function (value) {
+          return value == null || value < this.price;
+        },
+        message: "The offer price must be lower than the original price.",
+      },
+    },
+
+    images: {
+      type: [String],
       required: true,
+      validate: {
+        validator: function (value) {
+          return Array.isArray(value) && value.length >= 1 && value.length <= 5;
+        },
+        message: "Product must have between 1 and 5 images.",
+      },
     },
 
     stock: {
       type: Number,
-      default: 0,
+      default: 1,
     },
 
     category: {
@@ -33,8 +50,18 @@ const productSchema = new mongoose.Schema(
       ref: "Category",
       required: true,
     },
+
+    isNew: {
+      type: Boolean,
+      default: false,
+    },
+
+    isBestSeller: {
+      type: Boolean,
+      default: false,
+    },
   },
   { timestamps: true }
 );
 
-export default mongoose.models.Product ||mongoose.model("Product", productSchema);
+export default mongoose.models.Product || mongoose.model("Product", productSchema);
