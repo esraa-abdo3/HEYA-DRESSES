@@ -68,6 +68,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "./api/auth/[...nextauth]/route";
 
 import { SelectedProductProvider } from "./Context/SelectedProductContext";
+import GoogleAnalytics from "./componets/Google Analytics/GoogleAnalytics";
 export const metadata = {
   title: "Heya Dresses",
   description: "Timeless designs for every special moment",
@@ -91,7 +92,7 @@ const cleanpromocodes= JSON.parse(JSON.stringify(promocodes));
   return (
     <html lang="en">
       <body>
-      
+      <GoogleAnalytics />
 
         <AuthProvider>
           <GuestInit isGuest={isGuest} />
