@@ -33,7 +33,7 @@ export default function DashboardLayout({ children }) {
   return (
     <div style={{ display: "flex" }}>
       <Sidebar />
-      <main style={{ flex: 1, padding: "20px" }}>
+      <main style={{ flex: 1, padding: "20px", minWidth: 0 }}>
         {children}
       </main>
     </div>

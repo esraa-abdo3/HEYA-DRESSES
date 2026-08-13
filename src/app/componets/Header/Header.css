@@ -1,11 +1,14 @@
 header{
     background-color: #025c54;
-    padding: 10px 0;
+    padding: 0;
  position: sticky;
     top: 0px;
     z-index: 10000000000000;
     width: 100%;
     
+}
+header .header-main-container {
+    padding: 10px 0;
 }
 header .container{
     width: 97%;
@@ -47,4 +50,56 @@ header .container .sociallinks a:nth-of-type(2):hover{
 }
 header .container .sociallinks a:nth-of-type(3):hover{
     color: green;
+}
+
+/* Announcement Bar Styles */
+.announcement-bar {
+  background-color: #ffffff;
+
+font-family: 'Times New Roman', Times, serif;
+  text-transform: capitalize;
+  overflow: hidden;
+  position: relative;
+  width: 100%;
+  padding: 10px 0;
+  display: flex;
+  align-items: center;
+}
+
+.ticker-track {
+  display: flex;
+  width: max-content;
+  animation: marquee-scroll 35s linear infinite;
+}
+
+.ticker-items {
+  display: flex;
+  align-items: center;
+  gap: 40px;
+  padding-right: 40px;
+  flex-shrink: 0;
+}
+
+.ticker-text {
+  font-family: "Inter", Arial, sans-serif;
+  font-size: 13.5px;
+  font-weight: 600;
+  color: #6f1f1f; /* Red */
+  letter-spacing: 0.05em;
+  white-space: nowrap;
+}
+
+.ticker-bullet {
+  color: #d32f2f;
+  font-size: 14px;
+  opacity: 0.6;
+}
+
+@keyframes marquee-scroll {
+  0% {
+    transform: translate3d(0, 0, 0);
+  }
+  100% {
+    transform: translate3d(-50%, 0, 0);
+  }
 }

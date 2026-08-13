@@ -22,6 +22,16 @@ export default function CartPage() {
   phone: "",
   paymentMethod: "cash",
    });
+
+  // 📅 booking date (rental day) — defaults to today, must stay within current month
+  const todayISO = new Date().toISOString().slice(0, 10);
+  const now = new Date();
+  const lastDayOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0)
+    .toISOString()
+    .slice(0, 10);
+  const [bookingDate, setBookingDate] = useState(todayISO);
+  const [note, setNote] = useState("");
+
   const [loading, setloading] = useState(false);
   const [error, seterror] = useState("");
   const [promo, setPromo] = useState("");
@@ -37,6 +47,31 @@ const total = cart.reduce((acc, item) => {
   : total;
   const [outofstock, setoutofstock] = useState(0);
   const guestId = localStorage.getItem("guestId");
+
+  // upcoming booked days (this month, from today onward) for a single product,
+  // read directly from the product document (product.bookedDates)
+  const getUpcomingBookedDays = (product) => {
+    const now = new Date();
+    return (product?.bookedDates || [])
+      .map((d) => new Date(d))
+      .filter(
+        (d) =>
+          d.toISOString().slice(0, 10) >= todayISO &&
+          d.getMonth() === now.getMonth() &&
+          d.getFullYear() === now.getFullYear()
+      )
+      .sort((a, b) => a - b)
+      .map((d) => d.toISOString().slice(0, 10));
+  };
+
+  // union of every date already booked for ANY product currently in the cart,
+  // since one order books all cart items for the same day
+  const blockedDatesForCart = new Set();
+  cart.forEach((item) => {
+    getUpcomingBookedDays(item.productId).forEach((d) => blockedDatesForCart.add(d));
+  });
+  const isBookingDateBlocked = blockedDatesForCart.has(bookingDate);
+
 function detectStock() {
   const count = cart.filter(
     (e) => e.productId.stock === 0
@@ -89,6 +124,18 @@ const handleCheckout = async (e) => {
     seterror("please remove outstocked items before checkout");
     return
  }
+  if (!bookingDate) {
+    seterror("Please choose a booking date");
+    return;
+  }
+  if (bookingDate < todayISO || bookingDate > lastDayOfMonth) {
+    seterror("Booking date must be within the current month, starting today");
+    return;
+  }
+  if (blockedDatesForCart.has(bookingDate)) {
+    seterror("One or more items in your cart are already booked on this date. Please choose another day.");
+    return;
+  }
   seterror("");
      setloading(true);
 const payload = {
@@ -102,8 +149,10 @@ const payload = {
     building: form.building,
     phone: form.phone,
   },
-  paymentMethod: form.paymentMethod,
+  paymentMethod: "cash",
   guestId: guestId || null,
+  bookingDate,
+  note,
 };
 
 if (isPromoApplied && promo) {
@@ -115,14 +164,7 @@ if (isPromoApplied && promo) {
 
   try {
     const res = await axios.post("/api/Order", payload);
-    
 
-    // 💳 Stripe
-    if (form.paymentMethod === "credit_card") {
-      window.location.href = res.data.url;
-      return;
-    }
-     
 if (!guestId) {
   await fetchWishlist();
 }
@@ -138,7 +180,7 @@ if (!guestId) {
 
   } catch (error) {
     console.log(error.message);
-    seterror("Something went wrong, please try again");
+    seterror(error.response?.data?.message || "Something went wrong, please try again");
    
   } finally {
     setloading(false);
@@ -215,6 +257,17 @@ const removePromo = () => {
                   <p className="price">
                     ${item.productId.price}
                   </p>
+
+                  {getUpcomingBookedDays(item.productId).length > 0 && (
+                    <p className="booked-days-hint">
+                      Already booked this month on:{" "}
+                      {getUpcomingBookedDays(item.productId)
+                        .map((d) =>
+                          new Date(d).toLocaleDateString("en-US", { month: "short", day: "numeric" })
+                        )
+                        .join(", ")}
+                    </p>
+                  )}
 
                   {/* QUANTITY CONTROL */}
                   {item.productId.stock === 0 ? 
@@ -346,6 +399,34 @@ const removePromo = () => {
       onChange={(e) => setForm({ ...form, phone: e.target.value })}
     />
                 </div>
+
+  <div className="booking-date">
+    <h4>Booking Date</h4>
+    <p className="hint">Choose the day you want to rent these items (this month only)</p>
+    <input
+      type="date"
+      value={bookingDate}
+      min={todayISO}
+      max={lastDayOfMonth}
+      onChange={(e) => setBookingDate(e.target.value)}
+    />
+    {isBookingDateBlocked && (
+      <p className="date-blocked-warning">
+        ⚠️ One of the items in your cart is already booked on this date. Please pick another day.
+      </p>
+    )}
+  </div>
+
+  <div className="booking-note">
+    <h4>Note (optional)</h4>
+    <textarea
+      placeholder="Anything we should know? e.g. pickup time, special request..."
+      value={note}
+      onChange={(e) => setNote(e.target.value)}
+      rows={3}
+    />
+  </div>
+
                      {error &&
                   <span style={{color:"red", font:"14px"}}>{ error}</span>
                 }
@@ -356,28 +437,15 @@ const removePromo = () => {
     <label>
       <input
         type="radio"
-        checked={form.paymentMethod === "cash"}
-        onChange={() =>
-          setForm({ ...form, paymentMethod: "cash" })
-        }
+        checked={true}
+        readOnly
       />
-      Cash on Delivery
-    </label>
-
-    <label>
-      <input
-        type="radio"
-        checked={form.paymentMethod === "credit_card"}
-        onChange={() =>
-          setForm({ ...form, paymentMethod: "credit_card" })
-        }
-      />
-      Credit Card 
+      Cash on Pickup / Delivery
     </label>
   </div>
                
 
-                <button className="checkout" onClick={ handleCheckout}>{loading ? <span className="loader"></span> : "checkout"}</button>
+                <button className="checkout" disabled={isBookingDateBlocked} onClick={ handleCheckout}>{loading ? <span className="loader"></span> : "checkout"}</button>
               </div>
               </div>
         </>

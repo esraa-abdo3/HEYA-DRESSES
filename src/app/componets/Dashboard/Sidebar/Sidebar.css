@@ -1,6 +1,6 @@
 .sidebar{
-    width: 260px;
-    background: #111827;
+    width: 240px;
+    background: #080808;
     color: white;
     height: 100vh;
     position: sticky;
@@ -12,6 +12,7 @@
 
 .logo{
     margin-bottom: 40px;
+    
 }
 
 .logo h2{
@@ -65,7 +66,7 @@
         position: fixed;
         top: 20px;
         left: 20px;
-        background: #111827;
+        background: #000000;
         color: white;
         width: 45px;
         height: 45px;

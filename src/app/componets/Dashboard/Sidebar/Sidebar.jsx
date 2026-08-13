@@ -47,10 +47,10 @@ export default function Sidebar() {
             <span>Products</span>
           </Link>
 
-          {/* <Link href="/Dashboard/orders">
+          <Link href="/Dashboard/Bookings">
             <FaShoppingCart />
-            <span>Orders</span>
-          </Link> */}
+            <span>Bookings</span>
+          </Link>
 
           <Link href="/Dashboard/catagories">
             <FaTags />

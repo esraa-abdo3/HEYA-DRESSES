@@ -1,30 +1,42 @@
 import dbConnect from "@/lib/dbConnect";
-import User from "@/models/Usermodel";
+import Wishlist from "@/models/Wishlistmodel";
+import "@/models/productmodel";
 import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "../auth/[...nextauth]/route";
 
-
 export async function POST(req) {
-    await dbConnect();
-      const session = await getServerSession(authOptions);
-      if (!session) {
-        return Response.json({ message: "Unauthorized" }, { status: 401 });
-       }
-      const userId = session.user.id;
-      const {  productId } = await req.json();
-      const user = await User.findById(userId);
+  await dbConnect();
 
-      if (!user) {
-      return Response.json({ message: "User not found" }, { status: 404 });
-     }
+  const session = await getServerSession(authOptions);
+  const userId = session?.user?.id || null;
+  const { productId, guestId } = await req.json();
 
-  if (!user.wishlist.includes(productId)) {
-    user.wishlist.push(productId);
-    await user.save();
+  if (!productId) {
+    return Response.json({ message: "productId is required" }, { status: 400 });
   }
 
-  return Response.json({ message: "Added to wishlist", wishlist: user.wishlist });
+  let wishlist;
+
+  if (userId) {
+    wishlist = await Wishlist.findOne({ userId });
+  } else {
+    wishlist = await Wishlist.findOne({ guestId });
+  }
+
+  if (!wishlist) {
+    wishlist = new Wishlist({
+      userId: userId || null,
+      guestId: userId ? null : guestId,
+      items: [productId],
+    });
+  } else if (!wishlist.items.some((id) => id.toString() === productId)) {
+    wishlist.items.push(productId);
+  }
+
+  await wishlist.save();
+
+  return Response.json({ message: "Added to wishlist", wishlist: wishlist.items });
 }
 
 export async function GET(req) {
@@ -34,26 +46,27 @@ export async function GET(req) {
     const { searchParams } = new URL(req.url);
     const limit = parseInt(searchParams.get("limit")) || 3;
     const page = parseInt(searchParams.get("page")) || 1;
+    const guestId = searchParams.get("guestId");
 
     const skip = limit * (page - 1);
 
     const session = await getServerSession(authOptions);
-    if (!session) {
-      return Response.json({ message: "Unauthorized" }, { status: 401 });
+    const userId = session?.user?.id;
+
+    let wishlist;
+
+    if (userId) {
+      wishlist = await Wishlist.findOne({ userId }).populate("items").lean();
+    } else if (guestId) {
+      wishlist = await Wishlist.findOne({ guestId }).populate("items").lean();
     }
 
-    const userId = session.user.id;
+    const allItems = wishlist?.items || [];
 
-    const user = await User.findById(userId).populate("wishlist").lean();
+    const totalItems = allItems.length;
+    const totalPages = Math.ceil(totalItems / limit) || 1;
 
-    if (!user) {
-      return Response.json({ message: "User not found" }, { status: 404 });
-    }
-
-    const totalItems = user.wishlist.length;
-    const totalPages = Math.ceil(totalItems / limit);
-
-    const items = user.wishlist.slice(skip, skip + limit);
+    const items = allItems.slice(skip, skip + limit);
 
     return Response.json({
       items,
@@ -71,23 +84,29 @@ export async function GET(req) {
 }
 
 export async function DELETE(req) {
-    await dbConnect();
-          const session = await getServerSession(authOptions);
-      if (!session) {
-        return Response.json({ message: "Unauthorized" }, { status: 401 });
-       }
-      const userId = session.user.id;
-      const { productId } = await req.json();
-      const user = await User.findById(userId);
+  await dbConnect();
 
-     if (!user) {
-      return NextResponse.json({ message: "User not found" }, { status: 404 });
-      }
-user.wishlist = user.wishlist.filter(
-  (id) => id.toString() !== productId
-);
+  const session = await getServerSession(authOptions);
+  const userId = session?.user?.id || null;
+  const { productId, guestId } = await req.json();
 
-  await user.save();
+  let wishlist;
 
-  return Response.json({ message: "Removed from wishlist", wishlist: user.wishlist });
+  if (userId) {
+    wishlist = await Wishlist.findOne({ userId });
+  } else {
+    wishlist = await Wishlist.findOne({ guestId });
+  }
+
+  if (!wishlist) {
+    return NextResponse.json({ message: "Wishlist not found" }, { status: 404 });
+  }
+
+  wishlist.items = wishlist.items.filter(
+    (id) => id.toString() !== productId
+  );
+
+  await wishlist.save();
+
+  return Response.json({ message: "Removed from wishlist", wishlist: wishlist.items });
 }

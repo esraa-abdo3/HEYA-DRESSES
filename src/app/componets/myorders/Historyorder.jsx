@@ -170,6 +170,12 @@ const totalPages = Math.ceil(sortedOrders.length / ordersPerPage);
                   <div style={{ fontSize: 11, color: "#999", textTransform: "uppercase", letterSpacing: "0.04em", marginBottom: 2 }}>Payment</div>
                   <div style={{ fontSize: 13, fontWeight: 500, textTransform: "capitalize" }}>{order.paymentMethod}</div>
                 </div>
+                {order.bookingDate && (
+                  <div>
+                    <div style={{ fontSize: 11, color: "#999", textTransform: "uppercase", letterSpacing: "0.04em", marginBottom: 2 }}>Booking Date</div>
+                    <div style={{ fontSize: 13, fontWeight: 500 }}>{formatDate(order.bookingDate)}</div>
+                  </div>
+                )}
               </div>
               <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", gap: 8 }}>
                 <div style={{ fontSize: 12, color: "#888" }}>Order: #{order._id}</div>
@@ -181,6 +187,12 @@ const totalPages = Math.ceil(sortedOrders.length / ordersPerPage);
             <div style={{ padding: "8px 18px", fontSize: 12, background: status.bg, color: status.color, borderBottom: `1px solid ${status.border}` }}>
               Payment: {order.paymentStatus} · {order.paymentProvider}
             </div>
+
+            {order.note && (
+              <div style={{ padding: "8px 18px", fontSize: 12, color: "#555", background: "#fafafa", borderBottom: "1px solid #f0f0f0" }}>
+                📝 Note: {order.note}
+              </div>
+            )}
 
             {/* Items */}
             <div style={{ padding: "8px 18px 4px", fontSize: 13, fontWeight: 500 }}>Processing</div>

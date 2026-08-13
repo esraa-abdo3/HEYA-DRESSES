@@ -36,14 +36,27 @@ const orderSchema = new mongoose.Schema(
 
     paymentMethod: {
       type: String,
-      enum: ["credit_card", "paypal", "cash", "wallet"],
+      enum: ["cash"],
+      default: "cash",
       required: true,
     },
 
     paymentStatus: {
       type: String,
-      enum: ["pending", "paid", "failed"],
+      enum: ["pending", "paid", "failed", "cancelled"],
       default: "pending",
+    },
+
+    // the rental/booking day chosen by the customer
+    bookingDate: {
+      type: Date,
+      required: true,
+    },
+
+    // optional admin note about this booking (e.g. pickup time, special request)
+    note: {
+      type: String,
+      default: "",
     },
 
     totalPrice: {

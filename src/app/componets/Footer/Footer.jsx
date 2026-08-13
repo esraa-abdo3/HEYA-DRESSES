@@ -122,7 +122,7 @@ const handleSubscribe = async () => {
         <footer className="footer">
 
             {/* Newsletter Strip */}
-            <div className="footer-newsletter">
+            {/* <div className="footer-newsletter">
                 <p className="newsletter-label">JOIN THE HEYA CIRCLE</p>
 
                 <div className="newsletter-form">
@@ -137,7 +137,7 @@ const handleSubscribe = async () => {
                         {loading ? "SUBSCRIBING..." : "SUBSCRIBE"}
                     </button>
                 </div>
-            </div>
+            </div> */}
 
             {/* Main Footer */}
             <div className="footer-main">
@@ -148,14 +148,16 @@ const handleSubscribe = async () => {
                         Timeless designs for every<br />special moment.
                     </p>
                     <div className="footer-socials">
-                        <a href="#"><FaInstagram /></a>
-                        <a href="#"><FaFacebookF /></a>
-                        <a href="#"><FaWhatsapp /></a>
-                        <a href="mailto:hello@heya.com"><MdOutlineEmail /></a>
+                        <a href="https://www.instagram.com/dressesheya/"><FaInstagram /></a>
+           
+                        <a   href="https://wa.me/201274152082"
+           target="_blank"
+  rel="noopener noreferrer"><FaWhatsapp /></a>
+                        <a href="mailto:esraaabdalnasserzz@gmail.com"><MdOutlineEmail /></a>
                     </div>
                 </div>
 
-                <div className="footer-col">
+                {/* <div className="footer-col">
                     <h4>SHOP</h4>
                     <ul>
                         <li><Link href="/">New Arrivals</Link></li>
@@ -163,9 +165,9 @@ const handleSubscribe = async () => {
                         <li><Link href="/">All Collections</Link></li>
                         <li><Link href="/Wishlist">Wishlist</Link></li>
                     </ul>
-                </div>
+                </div> */}
 
-                <div className="footer-col">
+                {/* <div className="footer-col">
                     <h4>HELP</h4>
                     <ul>
                         <li><Link href="/Myorders">My Orders</Link></li>
@@ -173,15 +175,17 @@ const handleSubscribe = async () => {
                         <li><Link href="#">Size Guide</Link></li>
                         <li><Link href="/">Contact Us</Link></li>
                     </ul>
-                </div>
+                </div> */}
 
                 <div className="footer-col">
                     <h4>CONTACT</h4>
                     <ul className="footer-contact">
-                        <li>hello@heya.com</li>
-                        <li>+20 100 000 0000</li>
+                        <li>esraaabdalnasserzz@gmail.com</li>
+                        <li>01220696581</li>
+                        <li>01222519040</li>
+
                         <li>Port Said, Egypt</li>
-                        <li>Sat – Thu: 10am – 9pm</li>
+                     
                     </ul>
                 </div>
 

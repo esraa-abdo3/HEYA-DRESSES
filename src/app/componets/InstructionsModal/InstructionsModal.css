@@ -1,0 +1,237 @@
+/* Simplified Instructions Modal Stylesheet */
+
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.45);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999999999;
+  padding: 20px;
+}
+
+.modal-content {
+  background-color: #ffffff;
+  width: 100%;
+  max-width: 480px;
+  border-radius: 16px;
+  box-shadow: 0 15px 45px rgba(0, 0, 0, 0.12);
+  padding: 35px 30px;
+  position: relative;
+  border: 1px solid #eaeaea;
+  box-sizing: border-box;
+}
+
+/* Close Button styling */
+.modal-close-btn {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  background: transparent;
+  border: none;
+  color: #a0a0a0;
+  cursor: pointer;
+  padding: 5px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.2s, background-color 0.2s;
+}
+
+.modal-close-btn:hover {
+  background-color: #f7f7f7;
+  color: #333333;
+}
+
+/* Header style - minimal */
+.modal-header {
+  text-align: center;
+  margin-bottom: 25px;
+}
+
+.modal-title {
+  font-family: "Fraunces", Georgia, serif;
+  font-size: 1.35rem;
+  font-weight: 500;
+  color: #1a1a1a;
+  margin: 0 0 6px 0;
+}
+
+.modal-subtitle {
+  font-family: "Inter", sans-serif;
+  font-size: 0.85rem;
+  color: #777777;
+  margin: 0;
+}
+
+.modal-header-line {
+  width: 50px;
+  height: 1px;
+  background-color: #eaeaea;
+  margin: 15px auto 0;
+}
+
+/* Body rules list - rows with borders */
+.modal-body {
+  display: flex;
+  flex-direction: column;
+}
+
+.policy-row {
+  display: flex;
+  gap: 18px;
+  align-items: flex-start;
+  padding: 16px 0;
+  border-bottom: 1px solid #f1f1f1;
+}
+
+.policy-row:last-of-type {
+  border-bottom: none;
+  padding-bottom: 25px;
+}
+
+/* Numbered Circle */
+.policy-number-circle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 1.5px solid var(--accent-gold, black);
+  color: var(--accent-gold, #000000);
+  font-family: "Fraunces", Georgia, serif;
+  font-size: 0.9rem;
+  font-weight: 600;
+  flex-shrink: 0;
+  background: transparent;
+}
+
+.policy-description {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.policy-description h4 {
+  font-family: "Inter", sans-serif;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #1a1a1a;
+  margin: 0;
+}
+
+.policy-description p {
+  font-family: "Inter", sans-serif;
+  font-size: 0.82rem;
+  line-height: 1.5;
+  color: #555555;
+  margin: 0;
+}
+
+.policy-description strong {
+  color: #1a1a1a;
+  font-weight: 600;
+}
+
+/* Footer / Action button */
+.modal-footer {
+  display: flex;
+  justify-content: center;
+}
+
+.modal-accept-btn {
+  width: 100%;
+  background-color: black;
+  color: #ffffff;
+  border: none;
+  border-radius: 8px;
+  padding: 13px 24px;
+  font-family: "Inter", sans-serif;
+  font-size: 0.85rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  cursor: pointer;
+  transition: background-color 0.2s, transform 0.15s;
+}
+
+.modal-accept-btn:hover {
+  background-color: rgba(0, 0, 0, 0.76)
+}
+
+.modal-accept-btn:active {
+  transform: translateY(1px);
+}
+
+/* Animations */
+.fade-in {
+  animation: bg-fade-in 0.35s ease-out forwards;
+}
+
+.fade-out {
+  animation: bg-fade-out 0.35s ease-in forwards;
+}
+
+.scale-up {
+  animation: content-scale-up 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.scale-down {
+  animation: content-scale-down 0.35s cubic-bezier(0.7, 0, 0.84, 0) forwards;
+}
+
+@keyframes bg-fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes bg-fade-out {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}
+
+@keyframes content-scale-up {
+  from {
+    opacity: 0;
+    transform: scale(0.95) translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+@keyframes content-scale-down {
+  from {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: scale(0.97) translateY(6px);
+  }
+}
+
+/* Mobile Screen Sizes */
+@media (max-width: 576px) {
+  .modal-content {
+    padding: 25px 20px;
+    border-radius: 12px;
+  }
+  .modal-title {
+    font-size: 1.2rem;
+  }
+  .policy-row {
+    padding: 12px 0;
+    gap: 14px;
+  }
+  .policy-number-circle {
+    width: 28px;
+    height: 28px;
+    font-size: 0.85rem;
+  }
+}

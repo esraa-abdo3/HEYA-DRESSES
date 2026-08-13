@@ -41,28 +41,31 @@ export default function Navbar() {
             <div className="Navbar">
                 <div className="container">
 
-                    <div className="menuIcon" onClick={() => setOpen(true)}>
+                    {/* <div className="menuIcon" onClick={() => setOpen(true)}>
                         ☰
-                    </div>
+                    </div> */}
 
-                    <ul className="links">
+                    {/* <ul className="links">
                         <li><Link href={"/"} className={pathname === "/" ? "active" : ""} >Home</Link></li>
                            <li><Link href={"/Myorders"} className={pathname === "/Myorders" ? "active" : ""} >my orders</Link></li>
-                        {/* <li><Link href={"/"} >About us</Link></li> */}
+                   
 
                  
-                    </ul>
+                    </ul> */}
 
                     <div className="logoname">
-                        HEYA
+                        <Link href={"/"}>
+                               HEYA
+                        </Link>
+                     
                     </div>
 
 
                     <div className="icons">
                         <Link href="/Wishlist" className="wishlist"><FaRegHeart /> <p>{ wishlist.length}</p></Link>
-                        <Link href="/Cart" className="carticon"><FaShoppingCart />  <p>{ cartCount}</p></Link>
+                        {/* <Link href="/Cart" className="carticon"><FaShoppingCart />  <p>{ cartCount}</p></Link> */}
                        
-                        {session ? (
+                        {/* {session ? (
                             <div className="user-menu" ref={dropdownRef}>
                                 <button
                                     className="user-icon-btn"
@@ -93,7 +96,7 @@ export default function Navbar() {
                             </div>
                         ) : (
                             <Link href="/Auth/login" className="login">Sign up</Link>
-                        )}
+                        )} */}
                     
                     </div>
 
@@ -101,7 +104,7 @@ export default function Navbar() {
             </div>
 
             {/* Sidebar */}
-            <div className={`sidebar ${open ? "active" : ""}`}>
+            {/* <div className={`sidebar ${open ? "active" : ""}`}>
                 
                 <span className="close" onClick={() => setOpen(false)}>✖</span>
 
@@ -111,7 +114,7 @@ export default function Navbar() {
                     <li><Link href="/" onClick={() => setOpen(false)}>Home</Link></li>
                    
                     <li><Link href="/Myorders" onClick={() => setOpen(false)}>My orders</Link></li>
-                     {/* <li><Link href="/about" onClick={() => setOpen(false)}>About</Link></li> */}
+                   
                 </ul>
                 <div>
 
@@ -144,7 +147,7 @@ export default function Navbar() {
 
          
 
-            </div>
+            </div> */}
 
             {/* Overlay */}
             {open && <div className="overlay" onClick={() => setOpen(false)}></div>}

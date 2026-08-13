@@ -3,10 +3,10 @@
 
     background: black;
     box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-    padding: 17px 0;
+    padding: 10px 0;
     color: white;
    position: sticky;
-    top: 40px;
+    top: 35px;
   
     width: 100%;
     z-index: 10000000000000;
@@ -18,7 +18,7 @@
     width: 96.5%;
     margin: 0 30px;
     display: flex;
-    justify-content: space-between;
+    justify-content:space-between;
     align-items: center;
 }
 
@@ -75,12 +75,14 @@
 }
 
 .icons {
-    display: flex;
-    justify-content: end;
-   flex: 1;
+    /* display: flex; */
+    /* justify-content: end; */
+   /* flex: 1; */
     gap: 15px;
     font-size: 18px;
-    align-items: center;
+    padding-right: 10px;
+    padding-top: 5px;
+    /* align-items: center; */
 }
 .icons a{
     transition: 0.3s;
@@ -105,7 +107,7 @@
 .logoname {
     font-weight: bold;
     font-size: 20px;
-    text-align: center;
+    /* text-align: center; */
     color: white;
     flex: 2;
     cursor: default;
@@ -244,7 +246,7 @@
     z-index: 1000;
     width: 20px;
     height: 20px;
-    background-color:#025c54;
+    background-color:rgb(187, 21, 21);
     color: white;
     border-radius: 50%;
     -webkit-border-radius: 50%;

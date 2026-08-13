@@ -7,9 +7,23 @@ import { useWishlist } from "@/app/Context/WishlistContext";
 
 export default function CartPage() {
   const { addToCart, cartError } = useCart();
-  console.log("test70",cartError)
 
   const { wishlist, toggleWishlist, totalPages, currentPage, changePage  } = useWishlist();
+
+  const todayISO = new Date().toISOString().slice(0, 10);
+  const getUpcomingBookedDays = (product) => {
+    const now = new Date();
+    return (product?.bookedDates || [])
+      .map((d) => new Date(d))
+      .filter(
+        (d) =>
+          d.toISOString().slice(0, 10) >= todayISO &&
+          d.getMonth() === now.getMonth() &&
+          d.getFullYear() === now.getFullYear()
+      )
+      .sort((a, b) => a - b)
+      .map((d) => d.toLocaleDateString("en-US", { month: "short", day: "numeric" }));
+  };
 
 
   return (
@@ -37,7 +51,7 @@ export default function CartPage() {
         
       
         <img
-          src={item.image}
+          src={item.images[0]}
           alt={item.name}
           className="product-img"
         />
@@ -50,18 +64,35 @@ export default function CartPage() {
             {item.description?.slice(0, 60)}...
           </p>
 
-          <p className="price">
-            ${item.price}
-          </p>
+      <div className="price-row">
+                <span>price : </span>
+                <span className="price-current">
+                  {item.priceAfterDiscount ?? item.price} LE
+                </span>
+                {item.priceAfterDiscount && (
+                  <span className="price-original">{item.price} LE</span>
+                )}
+                {item.priceAfterDiscount && (
+                  <span className="price-discount-badge">
+                    -{Math.round(100 - (item.priceAfterDiscount / item.price) * 100)}%
+                  </span>
+                )}
+              </div>
 
           {isOut && (
             <p className="stock-out">Out of Stock 🚫</p>
           )}
 
-          {isLow && (
+          {/* {isLow && (
             <p className="stock-low">Low Stock ⚠️</p>
-          )}
-          { !isOut && 
+          )} */}
+
+          {/* {getUpcomingBookedDays(item).length > 0 && (
+            <p className="booked-days-hint">
+              Booked this month on: {getUpcomingBookedDays(item).join(", ")}
+            </p>
+          )} */}
+          {/* { !isOut && 
               <button
             className="Add-to-card-button"
             disabled={isOut}
@@ -69,10 +100,10 @@ export default function CartPage() {
           >
          Add to cart
           </button>
-}
-        {cartError[item._id] && (
+} */}
+        {/* {cartError[item._id] && (
             <p className="error"style={{color:"red" , fontSize:"14px"}}>{cartError[item._id]}which in the cart</p>
-          )}    
+          )}     */}
     
         </div>
 

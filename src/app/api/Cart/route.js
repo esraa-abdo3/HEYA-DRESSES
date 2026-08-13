@@ -44,22 +44,6 @@ const itemIndex = cart.items.findIndex(
   return Response.json({ message: "Added to cart", cart });
 }
 
-
-// export async function GET(req) {
-//   await dbConnect();
-
-//   const session = await getServerSession(authOptions);
-
-//   if (!session) {
-//     return Response.json({ cart: { items: [] } }, { status: 401 });
-//   }
-
-//   const userId = session.user.id;
-
-//   const cart = await Cart.findOne({ userId }).populate("items.productId");
-
-//   return Response.json({ cart });
-// }
 export async function GET(req) {
   await dbConnect();
 

@@ -3,7 +3,6 @@ import Order from "@/models/Ordermodel";
 import { getServerSession } from "next-auth";
 import { authOptions } from "../auth/[...nextauth]/route";
 import productmodel from "@/models/productmodel";
-import { stripe } from "@/lib/stripe";
 import Cartmodel from "@/models/Cartmodel";
 import PromoCode from "@/models/Promocodemodel";
 
@@ -205,9 +204,10 @@ export async function POST(req) {
     const {
       items,
       address,
-      paymentMethod,
       promoCode,
       guestId,
+      bookingDate,
+      note,
     } = await req.json();
 
     if (!items || items.length === 0) {
@@ -217,6 +217,42 @@ export async function POST(req) {
       );
     }
 
+    if (!bookingDate) {
+      return Response.json(
+        { message: "Please choose a booking date" },
+        { status: 400 }
+      );
+    }
+
+    /*********************************
+     * 📅 VALIDATE BOOKING DATE
+     * must be today or later, and within the current month
+     *********************************/
+    const chosenDate = new Date(bookingDate);
+    if (isNaN(chosenDate.getTime())) {
+      return Response.json(
+        { message: "Invalid booking date" },
+        { status: 400 }
+      );
+    }
+
+    const now = new Date();
+    const startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    const startOfNextMonth = new Date(now.getFullYear(), now.getMonth() + 1, 1);
+
+    if (chosenDate < startOfToday || chosenDate >= startOfNextMonth) {
+      return Response.json(
+        { message: "Booking date must be within the current month" },
+        { status: 400 }
+      );
+    }
+
+    const dayStart = new Date(
+      chosenDate.getFullYear(),
+      chosenDate.getMonth(),
+      chosenDate.getDate()
+    );
+
     /*********************************
      * 🛍 GET PRODUCTS
      *********************************/
@@ -225,6 +261,25 @@ export async function POST(req) {
     const products = await productmodel.find({
       _id: { $in: productIds },
     });
+
+    /*********************************
+     * 🚫 CHECK DOUBLE-BOOKING
+     * a product already booked for the same day (stored on the product itself)
+     * can't be booked again
+     *********************************/
+    const dayKey = dayStart.toISOString().slice(0, 10);
+    const conflictingProduct = products.find((p) =>
+      (p.bookedDates || []).some(
+        (d) => new Date(d).toISOString().slice(0, 10) === dayKey
+      )
+    );
+
+    if (conflictingProduct) {
+      return Response.json(
+        { message: "One or more items are already booked on this date. Please choose another day." },
+        { status: 409 }
+      );
+    }
 
     let totalPrice = 0;
     let discount = 0;
@@ -276,9 +331,10 @@ export async function POST(req) {
       (totalPrice * discount) / 100;
 
     /*********************************
-     * 💵 CASH FLOW
+     * 💵 CASH / RENTAL BOOKING FLOW
+     * (payments are cash-only, no card processing)
      *********************************/
-    if (paymentMethod === "cash") {
+    {
       const order = await Order.create({
         userId: userId || null,
         guestId: userId ? null : guestId,
@@ -287,10 +343,12 @@ export async function POST(req) {
         paymentMethod: "cash",
         totalPrice,
         paymentStatus: "pending",
+        bookingDate: dayStart,
+        note: note || "",
       });
 
       /*********************************
-       * 📦 UPDATE STOCK
+       * 📦 UPDATE STOCK + ATTACH BOOKED DATE TO EACH PRODUCT
        *********************************/
       for (const item of items) {
         await productmodel.findByIdAndUpdate(
@@ -298,6 +356,9 @@ export async function POST(req) {
           {
             $inc: {
               stock: -item.quantity,
+            },
+            $addToSet: {
+              bookedDates: dayStart,
             },
           }
         );
@@ -370,89 +431,6 @@ export async function POST(req) {
       });
     }
 
-    /*********************************
-     * 💳 STRIPE FLOW
-     *********************************/
-    if (paymentMethod === "credit_card") {
-      let stripeDiscounts = [];
-
-      if (discount > 0) {
-        const coupon =
-          await stripe.coupons.create({
-            percent_off: discount,
-            duration: "once",
-          });
-
-        stripeDiscounts = [
-          {
-            coupon: coupon.id,
-          },
-        ];
-      }
-
-      const sessionStripe =
-        await stripe.checkout.sessions.create({
-          payment_method_types: ["card"],
-
-          mode: "payment",
-
-          discounts: stripeDiscounts,
-
-          metadata: {
-            userId: userId || "",
-            guestId: guestId || "",
-            address: JSON.stringify(address),
-            items: JSON.stringify(orderItems),
-            discount: discount.toString(),
-            email: userEmail,
-          },
-
-          line_items: orderItems.map(
-            (item) => {
-              const product = products.find(
-                (p) =>
-                  p._id.toString() ===
-                  item.productId.toString()
-              );
-
-              return {
-                price_data: {
-                  currency: "egp",
-
-                  product_data: {
-                    name:
-                      product?.name ||
-                      "Product",
-                  },
-
-                  unit_amount:
-                    item.price * 100,
-                },
-
-                quantity: item.quantity,
-              };
-            }
-          ),
-
-          success_url:
-            "https://heya-dresses.vercel.app/success",
-
-          cancel_url:
-            "https://heya-dresses.vercel.app/cancel",
-        });
-
-      return Response.json({
-        url: sessionStripe.url,
-      });
-    }
-
-    return Response.json(
-      {
-        message:
-          "Invalid payment method",
-      },
-      { status: 400 }
-    );
   } catch (error) {
     console.log("❌ ORDER ERROR", error);
 

@@ -1,0 +1,350 @@
+/* Reviews Section Stylesheet */
+
+.reviews-section {
+  position: relative;
+  background-image: url('/reviews/ChatGPT\ Image\ Aug\ 12\,\ 2026\,\ 03_06_08\ PM.png');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  padding: 90px 0;
+  min-height: 1000px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+}
+
+.reviews-bg-overlay {
+  position: absolute;
+  inset: 0;
+    background: linear-gradient(#161310 0%, #16131026 50%, #16131059 100%);
+  z-index: 0;
+}
+
+.reviews-container {
+  position: relative;
+  z-index: 1;
+  width: 85%;
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+/* Header Area styling */
+.reviews-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  margin-bottom: 50px;
+}
+
+.reviews-logo-wrap {
+  margin-bottom: 20px;
+  animation: fadeIn 1s ease-out;
+}
+
+.reviews-logo-oval {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 75px;
+  height: 95px;
+  border: 1.5px solid #ffffff;
+  border-radius: 50% / 40%;
+  padding: 10px;
+  transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.reviews-logo-oval:hover {
+  transform: rotate(5deg) scale(1.05);
+}
+
+.reviews-logo-text {
+  font-family: "Fraunces", Georgia, serif;
+  font-size: 1.7rem;
+  font-weight: 300;
+  color: #ffffff;
+  letter-spacing: -1px;
+}
+
+.reviews-title {
+  font-family: "Inter", sans-serif;
+  font-size: clamp(1.8rem, 3.2vw, 2.5rem);
+  font-weight: 700;
+  color: #ffffff;
+  letter-spacing: 0.08em;
+  line-height: 1.25;
+  text-transform: uppercase;
+  max-width: 800px;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+}
+
+/* Layout for staggered cards */
+.reviews-layout {
+  position: relative;
+  height: 850px;
+  width: 100%;
+  margin-bottom: 40px;
+}
+
+/* SVG Arrows */
+.svg-connectors {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.connector-arrow {
+  position: absolute;
+}
+
+/* Arrow 1: connects Card 1 to Card 2 */
+.arrow-1 {
+  top: 13%;
+  left: 36%;
+  width: 25%;
+  height: 15%;
+}
+
+/* Arrow 2: connects Card 2 to Card 3 */
+.arrow-2 {
+  top: 32%;
+  left: 30%;
+  width: 26%;
+  height: 18%;
+}
+
+/* Arrow 3: connects Card 3 to Card 4 */
+.arrow-3 {
+  top: 55%;
+  left: 36%;
+  width: 25%;
+  height: 16%;
+}
+
+/* Card wrappers styling */
+.review-card-wrapper {
+  position: absolute;
+  padding: 8px;
+  border: 1.5px dashed rgba(255, 255, 255, 0.65);
+  border-radius: 18px;
+  background: transparent;
+  transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94), border-color 0.3s ease;
+  z-index: 2;
+  box-sizing: border-box;
+}
+
+.review-card-wrapper:hover {
+  transform: translateY(-6px) scale(1.015);
+  border-color: #ffffff;
+}
+
+.review-card {
+  background: #ffffff;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.2);
+}
+
+.review-image {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* Card positions on Desktop */
+.review-card-1 {
+  top: 0%;
+  left: 5%;
+  width: 44%;
+  max-width: 440px;
+}
+
+.review-card-2 {
+  top: 18%;
+  right: 5%;
+  width: 44%;
+  max-width: 440px;
+}
+
+.review-card-3 {
+  top: 40%;
+  left: 5%;
+  width: 44%;
+  max-width: 440px;
+}
+
+.review-card-4 {
+  top: 60%;
+  right: 5%;
+  width: 44%;
+  max-width: 440px;
+}
+
+/* Footer Section Styling */
+.reviews-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 40px;
+  padding-top: 30px;
+  border-top: 1px solid rgba(255, 255, 255, 0.2);
+  z-index: 3;
+}
+
+.badges-container {
+  display: flex;
+  gap: 20px;
+  align-items: center;
+}
+
+.badge-card {
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 10px;
+  overflow: hidden;
+  max-width: 150px;
+  padding: 6px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+  transition: transform 0.3s ease;
+}
+
+.badge-card:hover {
+  transform: scale(1.05);
+}
+
+.badge-image {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.reviews-footer-right {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.arrow-next-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 50px;
+  height: 50px;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  border-radius: 50%;
+  color: #ffffff;
+  cursor: pointer;
+  background: transparent;
+  transition: background 0.3s ease, border-color 0.3s ease, transform 0.3s ease;
+}
+
+.arrow-next-button:hover {
+  background: rgba(255, 255, 255, 0.15);
+  border-color: #ffffff;
+  transform: translateX(5px);
+}
+
+.instagram-handle {
+  font-family: "Inter", sans-serif;
+  font-size: 1rem;
+  font-weight: 500;
+  color: #ffffff;
+  letter-spacing: 0.05em;
+  text-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Responsive Rules */
+
+/* Tablet layouts */
+@media (max-width: 992px) {
+  .reviews-section {
+    min-height: auto;
+    padding: 70px 0;
+  }
+  .reviews-section {
+ background-image: url('/reviews/ChatGPT\ Image\ Aug\ 12\,\ 2026\,\ 03_06_08\ PM.png');
+    background-size: auto;
+    background-repeat: no-repeat;
+
+ 
+  }
+
+  .reviews-layout {
+    height: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+    align-items: center;
+  }
+
+  .svg-connectors {
+    display: none; /* Hide arrows on vertical stacking */
+  }
+
+  .review-card-wrapper {
+    position: static !important;
+    width: 90% !important;
+    max-width: 480px !important;
+    margin: 0 auto;
+  }
+}
+
+/* Mobile layouts */
+@media (max-width: 768px) {
+  .reviews-container {
+    width: 90%;
+  }
+
+  .reviews-header {
+    margin-bottom: 35px;
+  }
+
+  .reviews-logo-oval {
+    width: 65px;
+    height: 85px;
+  }
+
+  .reviews-logo-text {
+    font-size: 1.5rem;
+  }
+
+  .reviews-footer {
+    flex-direction: column;
+    gap: 25px;
+    align-items: center;
+    padding-top: 25px;
+  }
+
+  .badges-container {
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 15px;
+  }
+
+  .badge-card {
+    max-width: 120px;
+  }
+
+  .reviews-footer-right {
+    width: 100%;
+    justify-content: center;
+    margin-top: 10px;
+  }
+}

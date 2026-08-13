@@ -1,84 +1,99 @@
 "use client";
 
 import { useState } from "react";
-import "./products.css"
-import { useCart } from "@/app/Context/cartcontext";
-import { FaHeart } from "react-icons/fa";
-import { useWishlist, usewishlist } from "@/app/Context/WishlistContext";
+import { useRouter } from "next/navigation";
+import "./products.css";
+import { FaHeart, FaEye } from "react-icons/fa";
+import { useWishlist } from "@/app/Context/WishlistContext";
+import { useSelectedProduct } from "../../Context/SelectedProductContext";
+import Link from "next/link";
 
 export default function Getproducts({ products }) {
   const [category, setCategory] = useState("all");
-  const { addToCart ,cartError} = useCart();
   const { toggleWishlist, wishlist } = useWishlist();
+  const { setSelectedProduct } = useSelectedProduct();
+  const router = useRouter();
 
-  const filteredProducts =  category === "all" ? products : products.filter((p) => p.category.name === category);
+  const filteredProducts =
+    category === "all" ? products : products.filter((p) => p.category.name === category);
+
+
+
+
   return (
     <div className="products">
       <div className="container">
         <div className="filters">
-          <p
-             className={category === "all" ? "active" : ""}
-            onClick={() => setCategory("all")}>all</p>
-          <p
-             className={category === "dresses" ? "active" : ""}
-            onClick={() => setCategory("dresses")}>dresses</p>
-          <p
-            className={category === "heels" ? "active" : ""}
-            onClick={() => setCategory("heels")}>heels</p>
-          <p
-            className={category === "bags" ? "active" : ""}
-            onClick={() => setCategory("bags")}>bags</p>
+          <p className={category === "all" ? "active" : ""} onClick={() => setCategory("all")}>all</p>
+          <p className={category === "dresses" ? "active" : ""} onClick={() => setCategory("dresses")}>dresses</p>
+
+          <p className={category === "Bags" ? "active" : ""} onClick={() => setCategory("Bags")}>bags</p>
         </div>
 
         <div className="cards">
           {filteredProducts.length === 0 && (
-            <p style={{textTransform:"uppercase" , margin:"30px 0"}}>no products found for this catagory</p>
+            <p style={{ textTransform: "uppercase", margin: "30px 0" }}>no products found for this catagory</p>
           )}
-          {filteredProducts.map((item) => (   
-       <div key={item._id }  className="item">  
-             <div
-        style={{
-        backgroundImage: `url(${item.image})`,
-        backgroundSize: "cover",
-        backgroundPosition: "center",
-                   }}
-                   className="image"
+
+          {filteredProducts.map((item) => (
+            <div key={item._id} className="item">
+              <div
+                style={{
+                  backgroundImage: `url(${item.images[0]})`,
+                  backgroundSize: "cover",
+                  backgroundPosition: "center",
+                }}
+                className="image"
               >
                 <div
-                  style={{color:wishlist.some(e => e._id === item._id)? "red":"white"}}
+                  style={{ color: wishlist.some((e) => e._id === item._id) ? "red" : "white" }}
+                  className="icon-wishlist"
+                  onClick={() => toggleWishlist(item)}
+                >
+                  <FaHeart />
+                </div>
 
-                  className="icon-wishlist" onClick={() => {
-                    toggleWishlist(item)
+                {item.isNew && <div className="isnew">New</div>}
+
+          
+                <div className="hover-overlay">
+                 
+                  
+                  <button className="see-btn" >
+                     <Link href={`/products/${item._id}`}>
+                      <FaEye /> See
+                          </Link>
+                    </button>
                 
-                    
-                }}>
-                        <FaHeart />
-
-                  </div>
-            </div>
-               <h3>{item.name}</h3>
-               <p>{item.description}</p>
-               <div className="action">
-                <span>{item.price}$</span>
-                     {item.stock === 0 ? 
-                  <span className="outofstock">
-                    out of stock
-                  </span>
-                  :
-                  <button disabled={ cartError[item._id] } className="Add-to-card" onClick={() => addToCart(item)}>+</button>
-                  
-               }
-                  
-                   
+                </div>
               </div>
-              {cartError[item._id]  && <p className="error" style={{color:"red"}}>{cartError[item._id]} which in the cart</p>}
-         
-   
 
-  </div>
-))}
+              <h3>{item.name}</h3>
+              <p>{item.description.slice(0, 100)}...</p>
+
+              <div className="price-row">
+                <span>price : </span>
+                <span className="price-current">
+                  {item.priceAfterDiscount ?? item.price} LE
+                </span>
+                {item.priceAfterDiscount && (
+                  <span className="price-original">{item.price} LE</span>
+                )}
+                {item.priceAfterDiscount && (
+                  <span className="price-discount-badge">
+                    -{Math.round(100 - (item.priceAfterDiscount / item.price) * 100)}%
+                  </span>
+                )}
+              </div>
+
+              <button className="seemore" >
+                  <Link href={`/products/${item._id}`}>
+                  see details
+                  </Link>
+              </button>
+            </div>
+          ))}
         </div>
-
       </div>
     </div>
   );

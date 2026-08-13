@@ -550,6 +550,13 @@ p.error{
   box-shadow: none;
 }
 
+.checkout:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
 /* ─── TRUST BADGES ────────────────────────────────────── */
 
 .trust-badges {
@@ -727,6 +734,38 @@ p.error{
 }
 .payment-method label input{
   margin-right: 5px;
+}
+.booking-date,
+.booking-note{
+  border-top: 1px solid #eee;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding-top: 15px;
+}
+.booking-date input[type="date"],
+.booking-note textarea{
+  padding: 7px 10px;
+  border-radius: 8px;
+  border: 1px solid #eee;
+  font-size: 16px;
+  font-family: inherit;
+}
+.booking-date .hint{
+  font-size: 13px;
+  color: #888;
+  margin: 0;
+}
+.booked-days-hint{
+  font-size: 12px;
+  color: #c0392b;
+  margin: 2px 0;
+}
+.date-blocked-warning{
+  font-size: 13px;
+  color: #c0392b;
+  font-weight: 600;
+  margin: 4px 0 0;
 }
 .loader {
   width: 18px;

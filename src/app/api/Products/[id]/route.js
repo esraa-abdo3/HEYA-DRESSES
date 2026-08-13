@@ -167,6 +167,8 @@ export async function PUT(req, { params }) {
 
 
 
+
+
     if (formData.has("priceAfterDiscount")) {
       const raw = formData.get("priceAfterDiscount");
 
@@ -213,6 +215,23 @@ export async function PUT(req, { params }) {
 
     if (formData.has("isBestSeller")) {
       updateData.isBestSeller = formData.get("isBestSeller") === "true";
+    }
+
+    if (formData.has("bookedDates")) {
+      try {
+        const raw = formData.get("bookedDates");
+        const parsed = JSON.parse(raw); // array of "YYYY-MM-DD" strings
+        if (Array.isArray(parsed)) {
+          updateData.bookedDates = parsed
+            .filter((d) => !isNaN(new Date(d).getTime()))
+            .map((d) => new Date(d));
+        }
+      } catch (e) {
+        return Response.json(
+          { message: "Invalid bookedDates format" },
+          { status: 400 }
+        );
+      }
     }
 
     // ================== إدارة الصور (الخيار 3) ==================

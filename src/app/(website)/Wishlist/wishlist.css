@@ -687,6 +687,12 @@ body {
   cursor: default;
   
 }
+.booked-days-hint{
+  color: #c0392b;
+  font-size: 12.5px;
+  font-weight: 600;
+  margin: 4px 0;
+}
 .pagination {
   display: flex;
   justify-content: center;
@@ -706,4 +712,122 @@ body {
   background: black;
   color: white;
   border-color: black;
+}
+.price-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 5px;
+  margin-top: 4px;
+  padding: 0 10px;
+}
+
+.price-current {
+  font-size: .8rem;
+  font-weight: 700;
+  color: var(--text-dark);
+}
+
+.price-original {
+  font-size: 0.7rem !important;
+  color: #9a9a9a !important;
+  text-decoration: line-through;
+  font-weight: 300 !important;
+}
+
+.price-discount-badge {
+  font-size: 0.6rem !important;
+  font-weight: 400;
+  color: white !important;
+  background: rgb(225, 49, 49) !important;
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+.seemore{
+  background-color: black;
+  padding: 10px 10px;
+  color: white;
+  text-transform: capitalize;
+  border-radius: 16px;
+  -webkit-border-radius: 16px;
+  -moz-border-radius: 16px;
+  -ms-border-radius: 16px;
+  -o-border-radius: 16px;
+  border: none;
+  box-shadow: none;
+  transition: 0.3s;
+  -webkit-transition: 0.3s;
+  -moz-transition: 0.3s;
+  -ms-transition: 0.3s;
+  -o-transition: 0.3s;
+}
+.seemore:hover{
+  background-color: rgba(0, 0, 0, 0.774);
+  transform: scale(.98);
+  -webkit-transform: scale(.98);
+  -moz-transform: scale(.98);
+  -ms-transform: scale(.98);
+  -o-transform: scale(.98);
+}
+.isnew{
+ left: 5%;
+  top: 2.5%;
+  background-color: #2b6d0f;
+  padding: 2px 15px;
+  color: white;
+  font-weight: bold;
+  border-radius: 8px;
+  -webkit-border-radius: 8px;
+  -moz-border-radius: 8px;
+  -ms-border-radius: 8px;
+  -o-border-radius: 8px;
+  width: fit-content;
+  font-size: 14px;
+  position: absolute;
+}
+.image {
+  position: relative;
+  overflow: hidden;
+}
+
+.hover-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.35);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.image:hover .hover-overlay {
+  opacity: 1;
+}
+
+.see-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 22px;
+  background: #fff;
+  color: #000;
+  border: none;
+  border-radius: 30px;
+  font-size: 14px;
+  letter-spacing: 1px;
+  cursor: pointer;
+  transform: translateY(10px);
+  opacity: 0;
+  transition: all 0.3s ease 0.05s;
+}
+
+.image:hover .see-btn {
+  transform: translateY(0);
+  opacity: 1;
+}
+
+.see-btn:hover {
+  background: #000;
+  color: #fff;
 }

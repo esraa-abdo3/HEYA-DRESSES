@@ -23,7 +23,10 @@ const productSchema = new mongoose.Schema(
       default: null,
       validate: {
         validator: function (value) {
-          return value == null || value < this.price;
+          if (value == null) return true;
+  
+          if (this.price == null) return true;
+          return value < this.price;
         },
         message: "The offer price must be lower than the original price.",
       },
@@ -43,6 +46,13 @@ const productSchema = new mongoose.Schema(
     stock: {
       type: Number,
       default: 1,
+    },
+
+    // days (this product) is already booked/rented on — attached directly to the product
+    // so the storefront can show them to the customer right away.
+    bookedDates: {
+      type: [Date],
+      default: [],
     },
 
     category: {

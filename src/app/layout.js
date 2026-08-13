@@ -66,7 +66,15 @@ import { getAllpromocodes } from "./Context/Promocodeserver";
 import GuestInit from "./prodivders/gestprovider";
 import { getServerSession } from "next-auth";
 import { authOptions } from "./api/auth/[...nextauth]/route";
-import Script from "next/script";
+
+import { SelectedProductProvider } from "./Context/SelectedProductContext";
+export const metadata = {
+  title: "Heya Dresses",
+  description: "Timeless designs for every special moment",
+  icons: {
+    icon: "/icon.png",
+  },
+};
 
 export default async function RootLayout({ children }) {
   const cart = await getInitialCart();
@@ -78,42 +86,18 @@ const cleanpromocodes= JSON.parse(JSON.stringify(promocodes));
 
   const session = await getServerSession(authOptions);
   const isGuest = !session?.user;
-    const PIXEL_ID="2496490754109919"
+ 
 
   return (
     <html lang="en">
       <body>
       
-              <Script
-        id="meta-pixel-init"
-        strategy="afterInteractive"
-        dangerouslySetInnerHTML={{
-          __html: `
-            !function(f,b,e,v,n,t,s)
-            {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
-            n.callMethod.apply(n,arguments):n.queue.push(arguments)};
-            if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
-            n.queue=[];t=b.createElement(e);t.async=!0;
-            t.src=v;s=b.getElementsByTagName(e)[0];
-            s.parentNode.insertBefore(t,s)}(window, document,'script',
-            'https://connect.facebook.net/en_US/fbevents.js');
-            fbq('init', '${PIXEL_ID}');
-            fbq('track', 'PageView');
-          `,
-        }}
-      />
-      <noscript>
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
-          height="1"
-          width="1"
-          style={{ display: "none" }}
-          src={`https://www.facebook.com/tr?id=${PIXEL_ID}&ev=PageView&noscript=1`}
-          alt=""
-        />
-      </noscript>
+
         <AuthProvider>
           <GuestInit isGuest={isGuest} />
+          <SelectedProductProvider>
+
+       
 
           <WishlistProvider initiallist={cleanWish}>
             <CartProvider initialCart={cleanCart} promocodes={cleanpromocodes}>
@@ -123,7 +107,8 @@ const cleanpromocodes= JSON.parse(JSON.stringify(promocodes));
 
          
             </CartProvider>
-          </WishlistProvider>
+            </WishlistProvider>
+               </SelectedProductProvider>
         </AuthProvider>
       </body>
     </html>

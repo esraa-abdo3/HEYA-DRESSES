@@ -1,40 +1,50 @@
-
-import Link from "next/link";
 import ScrollToProducts from "../componets/ScrollToProducts/ScrollToProducts";
-import Products from "./products/productclient"
+import ShopTheLook from "../componets/shoplook/shoplook";
+import ReviewsSection from "../componets/ReviewsSection/ReviewsSection";
+import InstructionsModal from "../componets/InstructionsModal/InstructionsModal";
+import Products from "./products/productclient";
+
 export default function Home() {
   return (
     <>
+      <InstructionsModal />
+<section className="hero-section">
+  <div className="hero-image-wrap">
+    <img
+      src="hero.png"
+      alt="Elegant evening dress"
+      className="hero-image"
+    />
+    <div className="hero-scrim" />
+  </div>
+
+  <div className="hero-content">
+    <span className="hero-label">NEW COLLECTION JUST FOR YOU</span>
+    <h1 className="hero-title">
+      Glow with
+      <br />
+      <em>Elegance</em>
+    </h1>
+    <span className="hero-divider" />
+    <p className="hero-subtitle">
+      Refined pieces designed with fluid silhouettes and considered
+      detail. From evening events to everyday moments, each design is
+      made to move with you and last well beyond the season.
+    </p>
+    <div className="hero-buttons">
+
+      <ScrollToProducts />
+    </div>
   
+  </div>
+</section>
 
-       <div className="hero-section">
-      <div className="hero-overlay" />
+      <div id="products-section">
+        <Products />
+      </div>
 
-      <div className="hero-content">
-        <span className="hero-label">NEW COLLECTION</span>
-        <h1 className="hero-title">
-          Glow with<br />Elegance
-        </h1>
-        <div className="hero-divider" />
-        <p className="hero-subtitle">
-          Timeless designs for every special moment.<br />
-          Because you deserve to shine.
-        </p>
-        <div className="hero-buttons">
-            <button className="btn-primary">
-              <Link href={"Auth/Signup"} style={{textDecoration:"none", color:"white"}}>Sign up</Link>
-       
-            </button>
-         <ScrollToProducts/>
-        </div>
-        </div>
-        </div>
-      
-        <div id="products-section">
-                <Products />
-            </div>
-        
-      </>
- 
+      <ReviewsSection />
+
+    </>
   );
 }
