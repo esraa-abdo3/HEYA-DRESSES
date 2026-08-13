@@ -105,7 +105,7 @@ a {
 
 .hero-title {
   font-family: "Fraunces", Georgia, serif;
-  font-size: clamp(2.4rem, 4.5vw, 4rem);
+  font-size: clamp(5.4rem, 10.5vw, 4rem);
   line-height: 1.05;
   font-weight: 500;
   margin: 0.6em 0 0;
@@ -114,33 +114,7 @@ a {
   animation: fadeUp 0.8s ease forwards;
   animation-delay: 0.35s;
 }
-@media(max-width:992px){
-  .hero-title {
-  font-family: "Fraunces", Georgia, serif;
-  font-size: clamp(2.4rem, 4.5vw, 4rem);
-  line-height: 1.05;
-  font-weight: 500;
-  margin: 0.6em 0 0;
-  color: white !important;
-  opacity: 0;
-  animation: fadeUp 0.8s ease forwards;
-  animation-delay: 0.35s;
-}
-.hero-label {
-  position: absolute;
-  left: 50px;
-  top: 20px;
-  font-family: "Inter", sans-serif;
-  font-size: 0.75rem;
-  letter-spacing: 0.18em;
-  color: white !important;
-  font-weight: 600;
-  opacity: 0;
-  animation: fadeUp 0.7s ease forwards;
-  animation-delay: 0.2s;
-}
 
-}
 .hero-title em {
   font-style: italic;
   color: var(--accent-gold);
@@ -194,7 +168,43 @@ a {
     transform: translateY(0);
   }
 }
+@media(max-width:992px){
+  .hero-title {
+  font-family: "Fraunces", Georgia, serif;
+   font-size: clamp(4.8rem, 5vw, 2rem) !important;
+  line-height: 1.05;
+  font-weight: 500;
+  margin: 0.6em 0 0;
+  color: white !important;
+  opacity: 0;
+  animation: fadeUp 0.8s ease forwards;
+  animation-delay: 0.35s;
+}
+.hero-label {
+  width: 100%;
+  position: absolute;
+  text-align: center !important;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  left: 0;
 
+  top: 20px;
+  font-family: "Inter", sans-serif;
+  font-size: 0.75rem;
+  letter-spacing: 0.18em;
+  color: white !important;
+  font-weight: 600;
+  opacity: 0;
+  animation: fadeUp 0.7s ease forwards;
+  animation-delay: 0.2s;
+  -webkit-transform:translateX(-3%) ;
+  -moz-transform:translateX(-3%) ;
+  -ms-transform:translateX(-3%) ;
+  -o-transform:translateX(-3%) ;
+}
+
+}
 /* ========== الموبايل ========== */
 @media (max-width: 768px) {
   .hero-section {
@@ -228,7 +238,7 @@ a {
     z-index: 2;
     justify-content: flex-end;
     min-height: 100vh;
-    padding: 8vh 6vw 10vh;
+    /* padding: 8vh 6vw 10vh; */
     background: transparent;
     color: var(--panel-ivory);
   }
@@ -239,6 +249,8 @@ a {
 
   .hero-title {
     color: var(--panel-ivory);
+       font-size: clamp(4.8rem, 5vw, 2rem) !important; 
+   
   }
 }
 

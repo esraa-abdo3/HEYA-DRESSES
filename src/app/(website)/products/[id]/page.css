@@ -124,8 +124,9 @@ width: 80%;
 }
 
 
-.price-row {
+.product-details .price-row {
   display: flex;
+  padding: 0 !important;
   align-items: center;
   gap: 12px;
   margin-bottom: 15px;

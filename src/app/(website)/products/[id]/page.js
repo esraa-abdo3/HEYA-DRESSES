@@ -171,7 +171,7 @@ export default function ProductDetails() {
 
           <div className="price-row">
             <span className="price-current">
-              <span style={{ fontSize: "19px" }}>price:</span>
+            <span style={{ fontSize: "19px" }}>price:</span>
               {priceAfterDiscount ?? price} LE
             </span>
             {priceAfterDiscount && (

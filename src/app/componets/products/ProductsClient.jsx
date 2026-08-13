@@ -68,7 +68,7 @@ export default function Getproducts({ products }) {
                 </div>
               </div>
 
-              <h3>{item.name}</h3>
+              <h4>{item.name}</h4>
               <p>{item.description.slice(0, 100)}...</p>
 
               <div className="price-row">
