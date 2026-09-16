@@ -5,15 +5,13 @@ import "@/models/productmodel";
 import { getServerSession } from "next-auth";
 import Wishlist from "@/models/Wishlistmodel";
 
-export async function getInitialwishlist(page = 1, limit = 3) {
+export async function getInitialwishlist() {
   try {
     const session = await getServerSession(authOptions);
 
     if (!session?.user?.id) {
       return {
         items: [],
-        totalPages: 1,
-        currentPage: 1,
       };
     }
 
@@ -25,28 +23,16 @@ export async function getInitialwishlist(page = 1, limit = 3) {
 
     const allItems = wishlist?.items || [];
 
-    const totalItems = allItems.length;
-    const totalPages = Math.ceil(totalItems / limit) || 1;
-
-    const start = (page - 1) * limit;
-    const end = start + limit;
-
-    const paginatedWishlist = allItems.slice(start, end);
-
     return {
-      items: paginatedWishlist.map((item) => ({
+      items: allItems.map((item) => ({
         ...item,
         _id: item._id.toString(),
       })),
-      totalPages,
-      currentPage: page,
     };
   } catch (err) {
     console.log("ERROR:", err);
     return {
       items: [],
-      totalPages: 1,
-      currentPage: 1,
     };
   }
 }

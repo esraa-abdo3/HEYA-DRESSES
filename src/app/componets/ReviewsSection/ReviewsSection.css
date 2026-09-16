@@ -1,25 +1,32 @@
 /* Reviews Section Stylesheet */
 
+/* The reviews section sits behind the main page content.
+   As the user scrolls past the content above, the reviews
+   are revealed from underneath like lifting a layer. */
+
 .reviews-section {
   position: relative;
-  background-image: url('/reviews/ChatGPT\ Image\ Aug\ 12\,\ 2026\,\ 03_06_08\ PM.png');
+  z-index: 1;
+  background-image: url('/reviews/ChatGPT\ Image\ Aug\ 12\, 2026\, 03_06_08\ PM.png');
   background-size: cover;
-  background-position: center;
+  background-position: center top;
   background-repeat: no-repeat;
-  padding: 90px 0;
-  min-height: 1000px;
+  background-attachment: fixed;
+  padding: clamp(50px, 7vw, 85px) 0;
+  min-height: 100vh;
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: flex-start;
   align-items: center;
-  overflow: hidden;
+  overflow-x: clip;
 }
 
 .reviews-bg-overlay {
   position: absolute;
   inset: 0;
-    background: linear-gradient(#161310 0%, #16131026 50%, #16131059 100%);
+  background: linear-gradient(180deg, #161310ee 0%, #16131066 30%, #16131088 70%, #161310fa 100%);
   z-index: 0;
+  pointer-events: none;
 }
 
 .reviews-container {
@@ -40,11 +47,17 @@
   align-items: center;
   text-align: center;
   margin-bottom: 50px;
+  opacity: 0;
+  transform: translateY(40px);
+  transition: opacity 0.8s ease, transform 0.8s ease;
+}
+.reviews-section.in-view .reviews-header {
+  opacity: 1;
+  transform: translateY(0);
 }
 
 .reviews-logo-wrap {
   margin-bottom: 20px;
-  animation: fadeIn 1s ease-out;
 }
 
 .reviews-logo-oval {
@@ -103,7 +116,6 @@
   position: absolute;
 }
 
-/* Arrow 1: connects Card 1 to Card 2 */
 .arrow-1 {
   top: 13%;
   left: 36%;
@@ -111,7 +123,6 @@
   height: 15%;
 }
 
-/* Arrow 2: connects Card 2 to Card 3 */
 .arrow-2 {
   top: 32%;
   left: 30%;
@@ -119,7 +130,6 @@
   height: 18%;
 }
 
-/* Arrow 3: connects Card 3 to Card 4 */
 .arrow-3 {
   top: 55%;
   left: 36%;
@@ -134,9 +144,32 @@
   border: 1.5px dashed rgba(255, 255, 255, 0.65);
   border-radius: 18px;
   background: transparent;
-  transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94), border-color 0.3s ease;
   z-index: 2;
   box-sizing: border-box;
+  opacity: 0;
+  transform: translateY(60px);
+  transition: opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1),
+              transform 0.7s cubic-bezier(0.16, 1, 0.3, 1),
+              border-color 0.3s ease;
+}
+
+.reviews-section.in-view .review-card-wrapper {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Staggered delay for each card */
+.reviews-section.in-view .review-card-1 {
+  transition-delay: 0.1s;
+}
+.reviews-section.in-view .review-card-2 {
+  transition-delay: 0.25s;
+}
+.reviews-section.in-view .review-card-3 {
+  transition-delay: 0.4s;
+}
+.reviews-section.in-view .review-card-4 {
+  transition-delay: 0.55s;
 }
 
 .review-card-wrapper:hover {
@@ -195,6 +228,13 @@
   padding-top: 30px;
   border-top: 1px solid rgba(255, 255, 255, 0.2);
   z-index: 3;
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity 0.7s ease 0.6s, transform 0.7s ease 0.6s;
+}
+.reviews-section.in-view .reviews-footer {
+  opacity: 1;
+  transform: translateY(0);
 }
 
 .badges-container {
@@ -258,93 +298,104 @@
   text-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
 }
 
-/* Animations */
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
 /* Responsive Rules */
 
 /* Tablet layouts */
 @media (max-width: 992px) {
-  .reviews-section {
+  /* .reviews-section {
     min-height: auto;
-    padding: 70px 0;
-  }
-  .reviews-section {
- background-image: url('/reviews/ChatGPT\ Image\ Aug\ 12\,\ 2026\,\ 03_06_08\ PM.png');
-    background-size: auto;
-    background-repeat: no-repeat;
-
- 
-  }
+    padding: clamp(40px, 6vw, 60px) 0;
+    position: relative;
+    background-attachment: scroll;
+    background-size: cover;
+    background-position: center;
+  } */
 
   .reviews-layout {
     height: auto;
     display: flex;
     flex-direction: column;
-    gap: 30px;
+    gap: 28px;
     align-items: center;
+    margin-bottom: 30px;
   }
 
   .svg-connectors {
-    display: none; /* Hide arrows on vertical stacking */
+    display: none;
   }
 
   .review-card-wrapper {
     position: static !important;
-    width: 90% !important;
-    max-width: 480px !important;
+    width: 92% !important;
+    max-width: 460px !important;
     margin: 0 auto;
+    opacity: 1 !important;
+    transform: none !important;
   }
 }
 
 /* Mobile layouts */
 @media (max-width: 768px) {
   .reviews-container {
-    width: 90%;
+    width: 92%;
   }
 
   .reviews-header {
-    margin-bottom: 35px;
+    margin-bottom: 25px;
+    opacity: 1 !important;
+    transform: none !important;
+  }
+
+  .reviews-logo-wrap {
+    margin-bottom: 14px;
   }
 
   .reviews-logo-oval {
-    width: 65px;
-    height: 85px;
+    width: 60px;
+    height: 78px;
+    padding: 8px;
   }
 
   .reviews-logo-text {
-    font-size: 1.5rem;
+    font-size: 1.35rem;
+  }
+
+  .reviews-title {
+    font-size: clamp(1.4rem, 5.5vw, 1.85rem);
+    letter-spacing: 0.05em;
+  }
+
+  .review-card-wrapper {
+    width: 100% !important;
+    max-width: 400px !important;
+    padding: 6px;
+    border-radius: 14px;
   }
 
   .reviews-footer {
     flex-direction: column;
-    gap: 25px;
+    gap: 20px;
     align-items: center;
     padding-top: 25px;
+    margin-top: 20px;
+    opacity: 1 !important;
+    transform: none !important;
   }
 
   .badges-container {
     justify-content: center;
     flex-wrap: wrap;
-    gap: 15px;
+    gap: 12px;
   }
 
   .badge-card {
-    max-width: 120px;
+    max-width: 110px;
+    padding: 4px;
   }
 
   .reviews-footer-right {
     width: 100%;
     justify-content: center;
-    margin-top: 10px;
+    margin-top: 5px;
   }
 }

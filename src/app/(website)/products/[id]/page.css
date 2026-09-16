@@ -280,3 +280,208 @@ width: 95%;
   height: 26px;
   margin-top: 20px;
 }
+
+/* Availability Calendar Section */
+.availability-section {
+  margin-top: 25px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+/* Continuous Animated Button */
+.view-booked-days-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 14px 28px;
+  background: linear-gradient(135deg, #1b3a2b 0%, #293e29 60%, #3d5e3d 100%);
+  color: #ffffff;
+  border: none;
+  border-radius: 50px;
+  font-size: 1.05rem;
+  font-weight: 700;
+  cursor: pointer;
+  letter-spacing: 0.3px;
+  outline: none;
+  position: relative;
+  transition: all 0.3s ease;
+  animation: bookedDaysPulse 2s infinite ease-in-out;
+  direction: rtl;
+}
+
+.view-booked-days-btn .btn-calendar-icon {
+  font-size: 1.25rem;
+  color: #ffd700;
+  animation: iconShake 3s infinite ease-in-out;
+}
+
+.view-booked-days-btn:hover {
+  background: linear-gradient(135deg, #11261c 0%, #1b3a2b 60%, #293e29 100%);
+  transform: translateY(-2px) scale(1.05);
+}
+
+.view-booked-days-btn:active {
+  transform: translateY(1px) scale(0.98);
+}
+
+/* Continuous Pulse & Glow Animation */
+@keyframes bookedDaysPulse {
+  0% {
+    transform: scale(1);
+    box-shadow: 0 4px 15px rgba(41, 62, 41, 0.4), 0 0 0 0 rgba(41, 62, 41, 0.6);
+  }
+  50% {
+    transform: scale(1.04);
+    box-shadow: 0 8px 25px rgba(41, 62, 41, 0.5), 0 0 0 14px rgba(41, 62, 41, 0);
+  }
+  100% {
+    transform: scale(1);
+    box-shadow: 0 4px 15px rgba(41, 62, 41, 0.4), 0 0 0 0 rgba(41, 62, 41, 0);
+  }
+}
+
+@keyframes iconShake {
+  0%, 80%, 100% {
+    transform: rotate(0deg);
+  }
+  85% {
+    transform: rotate(-15deg);
+  }
+  90% {
+    transform: rotate(15deg);
+  }
+  95% {
+    transform: rotate(-10deg);
+  }
+}
+
+/* Modal Popup Overlay */
+.calendar-modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.65);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999999;
+  padding: 16px;
+  animation: calendarModalFadeIn 0.25s ease-out forwards;
+}
+
+.calendar-modal-container {
+  background: #ffffff;
+  border-radius: 20px;
+  padding: 24px;
+  max-width: 480px;
+  width: 100%;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+  color: #111827;
+  position: relative;
+  max-height: 90vh;
+  overflow-y: auto;
+  animation: calendarModalSlideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.calendar-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding-bottom: 14px;
+  margin-bottom: 16px;
+  border-bottom: 1px solid #f3f4f6;
+  direction: rtl;
+}
+
+.calendar-modal-title {
+  margin: 0;
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: #111827;
+}
+
+.calendar-modal-subtitle {
+  margin: 4px 0 0 0;
+  font-size: 0.8rem;
+  color: #6b7280;
+  font-weight: 400;
+}
+
+.calendar-modal-close-icon {
+  background: transparent;
+  border: none;
+  font-size: 1.25rem;
+  cursor: pointer;
+  color: #9ca3af;
+  padding: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: all 0.2s ease;
+}
+
+.calendar-modal-close-icon:hover {
+  color: #111827;
+  background-color: #f3f4f6;
+}
+
+.calendar-modal-body {
+  margin-bottom: 12px;
+}
+
+.calendar-modal-close-btn {
+  width: 100%;
+  padding: 12px;
+  background: #1b3a2b;
+  color: #ffffff;
+  border: none;
+  border-radius: 12px;
+  font-weight: 700;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.calendar-modal-close-btn:hover {
+  background: #293e29;
+}
+
+@keyframes calendarModalFadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes calendarModalSlideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@media (max-width: 576px) {
+  .view-booked-days-btn {
+    width: 100%;
+    font-size: 0.95rem;
+    padding: 12px 20px;
+  }
+
+  .calendar-modal-container {
+    padding: 18px;
+    border-radius: 16px;
+  }
+}

@@ -1,5 +1,5 @@
 import dbConnect from "@/lib/dbConnect";
-import Order from "@/models/Ordermodel";
+import Booking from "@/models/Bookingmodel";
 
 // GET /api/Bookings?month=YYYY-MM
 // returns { [productId]: ["YYYY-MM-DD", ...] } for every product that has an
@@ -25,24 +25,24 @@ export async function GET(req) {
     const start = new Date(year, month, 1);
     const end = new Date(year, month + 1, 1);
 
-    const orders = await Order.find({
+    const bookings = await Booking.find({
       bookingDate: { $gte: start, $lt: end },
       paymentStatus: { $in: ["pending", "paid"] },
     })
-      .select("items.productId bookingDate")
+      .select("productId bookingDate")
       .lean();
 
     const bookedDates = {};
 
-    for (const order of orders) {
-      const dateStr = new Date(order.bookingDate).toISOString().slice(0, 10);
-      for (const item of order.items) {
-        const productId = item.productId?.toString();
-        if (!productId) continue;
-        if (!bookedDates[productId]) bookedDates[productId] = [];
-        if (!bookedDates[productId].includes(dateStr)) {
-          bookedDates[productId].push(dateStr);
-        }
+    for (const booking of bookings) {
+      const productId = booking.productId?.toString();
+      if (!productId) continue;
+
+      const dateStr = new Date(booking.bookingDate).toISOString().slice(0, 10);
+
+      if (!bookedDates[productId]) bookedDates[productId] = [];
+      if (!bookedDates[productId].includes(dateStr)) {
+        bookedDates[productId].push(dateStr);
       }
     }
 

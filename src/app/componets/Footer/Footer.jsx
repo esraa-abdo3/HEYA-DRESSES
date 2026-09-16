@@ -193,11 +193,7 @@ const handleSubscribe = async () => {
 
             <div className="footer-bottom">
                 <p>© {new Date().getFullYear()} HEYA. All rights reserved.</p>
-                <div className="footer-bottom-links">
-                    <Link href="#">Privacy Policy</Link>
-                    <span>·</span>
-                    <Link href="#">Terms of Use</Link>
-                </div>
+          
             </div>
 
         </footer>

@@ -16,11 +16,15 @@ export async function POST(req) {
     return Response.json({ message: "productId is required" }, { status: 400 });
   }
 
+  if (!userId && !guestId) {
+    return Response.json({ message: "User ID or Guest ID is required" }, { status: 400 });
+  }
+
   let wishlist;
 
   if (userId) {
     wishlist = await Wishlist.findOne({ userId });
-  } else {
+  } else if (guestId) {
     wishlist = await Wishlist.findOne({ guestId });
   }
 
@@ -44,11 +48,7 @@ export async function GET(req) {
     await dbConnect();
 
     const { searchParams } = new URL(req.url);
-    const limit = parseInt(searchParams.get("limit")) || 3;
-    const page = parseInt(searchParams.get("page")) || 1;
     const guestId = searchParams.get("guestId");
-
-    const skip = limit * (page - 1);
 
     const session = await getServerSession(authOptions);
     const userId = session?.user?.id;
@@ -61,17 +61,10 @@ export async function GET(req) {
       wishlist = await Wishlist.findOne({ guestId }).populate("items").lean();
     }
 
-    const allItems = wishlist?.items || [];
-
-    const totalItems = allItems.length;
-    const totalPages = Math.ceil(totalItems / limit) || 1;
-
-    const items = allItems.slice(skip, skip + limit);
+    const items = wishlist?.items || [];
 
     return Response.json({
       items,
-      totalPages,
-      currentPage: page,
     });
   } catch (err) {
     console.error("Wishlist GET error:", err);
@@ -90,11 +83,15 @@ export async function DELETE(req) {
   const userId = session?.user?.id || null;
   const { productId, guestId } = await req.json();
 
+  if (!userId && !guestId) {
+    return NextResponse.json({ message: "User ID or Guest ID is required" }, { status: 400 });
+  }
+
   let wishlist;
 
   if (userId) {
     wishlist = await Wishlist.findOne({ userId });
-  } else {
+  } else if (guestId) {
     wishlist = await Wishlist.findOne({ guestId });
   }
 

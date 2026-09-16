@@ -2,6 +2,8 @@
     background-color: #111;
     color: #ccc;
     font-family: 'Helvetica Neue', sans-serif;
+    position: relative;
+    z-index: 2;
 }
 
 /* ── Newsletter ── */

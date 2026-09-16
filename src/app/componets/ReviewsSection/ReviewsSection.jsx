@@ -1,9 +1,29 @@
 "use client";
-import React from "react";
+import React, { useEffect, useRef, useState } from "react";
 import "./ReviewsSection.css";
 import Link from "next/link";
 
 export default function ReviewsSection() {
+  const sectionRef = useRef(null);
+  const [isVisible, setIsVisible] = useState(false);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setIsVisible(true);
+        }
+      },
+      { threshold: 0.05, rootMargin: "0px 0px -40px 0px" }
+    );
+
+    if (sectionRef.current) {
+      observer.observe(sectionRef.current);
+    }
+
+    return () => observer.disconnect();
+  }, []);
+
   const reviews = [
     {
       id: 1,
@@ -38,7 +58,7 @@ export default function ReviewsSection() {
   ];
 
   return (
-    <section className="reviews-section">
+    <section ref={sectionRef} className={`reviews-section ${isVisible ? "in-view" : ""}`}>
       {/* Blurred background image layer */}
       <div className="reviews-bg-overlay" />
 

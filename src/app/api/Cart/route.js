@@ -15,10 +15,10 @@ const { productId ,guestId} = await req.json();
   //  Logged in user
   if (userId) {
     cart = await Cart.findOne({ userId });
-  }
-  // gest user
-   else {
+  } else if (guestId) {
     cart = await Cart.findOne({ guestId });
+  } else {
+    return Response.json({ message: "User ID or Guest ID is required" }, { status: 400 });
   }
 
   if (!cart) {
@@ -78,8 +78,10 @@ export async function PATCH(req) {
 
   if (userId) {
     cart = await Cart.findOne({ userId });
-  } else {
+  } else if (guestId) {
     cart = await Cart.findOne({ guestId });
+  } else {
+    return Response.json({ message: "User ID or Guest ID is required" }, { status: 400 });
   }
 
   if (!cart) {
@@ -121,8 +123,10 @@ export async function DELETE(req) {
 
   if (userId) {
     cart = await Cart.findOne({ userId });
-  } else {
+  } else if (guestId) {
     cart = await Cart.findOne({ guestId });
+  } else {
+    return Response.json({ message: "User ID or Guest ID is required" }, { status: 400 });
   }
 
   if (!cart) {

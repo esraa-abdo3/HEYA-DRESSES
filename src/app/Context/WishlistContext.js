@@ -4,50 +4,60 @@ import { createContext, useContext, useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
 const WishlistContext = createContext();
 
-export const WishlistProvider = ({ children, initiallist = [] }) => {
-
-  const [totalPages, settotalpage] = useState(initiallist.totalPages);
-  const [currentPage, setcurrentPage] = useState(initiallist.currentPage);
-  const [wishlist, setWishlist] = useState(initiallist.items);
+export const WishlistProvider = ({ children, initiallist = {} }) => {
+  const [wishlist, setWishlist] = useState(initiallist?.items || []);
   const { data: session } = useSession();
 
-  useEffect(() => {
-    const guestId = localStorage.getItem("guestId");
-
-    if (!session?.user && guestId) {
-      fetch(`/api/Wishlist?guestId=${guestId}`)
-        .then((res) => res.json())
-        .then((data) => setWishlist(data.items || []))
-        .catch((err) => console.log(err));
-    }
-  }, []);
-
-  const changePage = async (page) => {
-    setcurrentPage(page);
-
+  const fetchWishlist = async () => {
     try {
-      const guestId = localStorage.getItem("guestId");
-      const guestParam = !session?.user && guestId ? `&guestId=${guestId}` : "";
-      const res = await fetch(`/api/Wishlist?page=${page}&limit=3${guestParam}`);
-      const data = await res.json();
+      const guestId = typeof window !== "undefined" ? localStorage.getItem("guestId") : null;
+      const guestParam = !session?.user && guestId ? `?guestId=${guestId}` : "";
 
-      setWishlist(data.items);
+      if (session?.user || guestId) {
+        const res = await fetch(`/api/Wishlist${guestParam}`);
+        const data = await res.json();
+        if (data?.items) {
+          setWishlist(data.items);
+        }
+      }
     } catch (err) {
-      console.log(err);
+      console.log("Error fetching wishlist:", err);
     }
   };
 
+  useEffect(() => {
+    let guestId = typeof window !== "undefined" ? localStorage.getItem("guestId") : null;
+
+    if (!session?.user) {
+      if (!guestId && typeof window !== "undefined") {
+        guestId = crypto.randomUUID();
+        localStorage.setItem("guestId", guestId);
+      }
+    }
+
+    fetchWishlist();
+  }, [session]);
+
   const toggleWishlist = async (product) => {
+    if (!product || !product._id) return;
+
     const productId = product._id;
     const exist = wishlist.some((item) => item._id === productId);
 
+    let updatedList;
     if (exist) {
-      setWishlist((prev) => prev.filter((e) => e._id !== productId));
+      updatedList = wishlist.filter((e) => e._id !== productId);
     } else {
-      setWishlist((prev) => [...prev, product]);
+      updatedList = [...wishlist, product];
+    }
+    setWishlist(updatedList);
+
+    let guestId = typeof window !== "undefined" ? localStorage.getItem("guestId") : null;
+    if (!session?.user && !guestId && typeof window !== "undefined") {
+      guestId = crypto.randomUUID();
+      localStorage.setItem("guestId", guestId);
     }
 
-    const guestId = localStorage.getItem("guestId");
     const payload = { productId };
     if (!session?.user && guestId) {
       payload.guestId = guestId;
@@ -77,11 +87,11 @@ export const WishlistProvider = ({ children, initiallist = [] }) => {
   };
 
   return (
-    <WishlistContext.Provider value={{ wishlist, toggleWishlist, totalPages, currentPage, changePage, setWishlist }}>
+    <WishlistContext.Provider value={{ wishlist, toggleWishlist, setWishlist, fetchWishlist }}>
       {children}
     </WishlistContext.Provider>
   );
-}
+};
 
 export const useWishlist = () => {
   const context = useContext(WishlistContext);

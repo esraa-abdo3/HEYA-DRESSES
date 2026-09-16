@@ -4,7 +4,8 @@ import { useState, useEffect } from "react";
 import { useParams } from "next/navigation";
 import { useSelectedProduct } from "../../../Context/SelectedProductContext";
 import { useWishlist } from "@/app/Context/WishlistContext";
-import { FaHeart } from "react-icons/fa";
+import { FaHeart, FaCalendarAlt, FaTimes } from "react-icons/fa";
+import AvailabilityCalendar from "../../../componets/AvailabilityCalendar/AvailabilityCalendar";
 import "./page.css";
 
 export default function ProductDetails() {
@@ -14,6 +15,7 @@ export default function ProductDetails() {
   const [mainImage, setMainImage] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [showCalendarModal, setShowCalendarModal] = useState(false);
 
   useEffect(() => {
     if (!id) return;
@@ -26,10 +28,7 @@ export default function ProductDetails() {
         if (!res.ok) throw new Error("Product not found");
         const data = await res.json();
 
-        // شوف شكل الريسبونس في الكونسول عشان تتأكد فين المنتج فعلياً
         console.log("API response:", data);
-
-        // لو الـ API بترجع الداتا ملفوفة جوا key زي product / data
         const product = data?.product || data?.data || data;
 
         setSelectedProduct(product);
@@ -44,8 +43,6 @@ export default function ProductDetails() {
     fetchProduct();
   }, [id]);
 
-  // ---- Skeleton أثناء التحميل ----
-// ---- Skeleton أثناء التحميل ----
   if (loading) {
     return (
       <div className="product-details">
@@ -104,10 +101,11 @@ export default function ProductDetails() {
     description,
     price,
     priceAfterDiscount,
-    images = [],       // ✅ default array عشان ميعملش crash
+    images = [],
     stock,
     isNew,
     isBestSeller,
+    bookedDates = [],
     _id,
   } = selectedProduct;
 
@@ -171,7 +169,7 @@ export default function ProductDetails() {
 
           <div className="price-row">
             <span className="price-current">
-            <span style={{ fontSize: "19px" }}>price:</span>
+              <span style={{ fontSize: "19px" }}>price:</span>
               {priceAfterDiscount ?? price} LE
             </span>
             {priceAfterDiscount && (
@@ -181,8 +179,60 @@ export default function ProductDetails() {
               </>
             )}
           </div>
+
+          {/* Availability Calendar Section Button */}
+          {/* <div className="availability-section">
+            <button
+              type="button"
+              className="view-booked-days-btn"
+              onClick={() => setShowCalendarModal(true)}
+            >
+              <FaCalendarAlt className="btn-calendar-icon" />
+              <span>شوف الأيام المحجوزة</span>
+            </button>
+          </div> */}
         </div>
       </div>
+
+      {/* Availability Calendar Modal
+      {showCalendarModal && (
+        <div
+          className="calendar-modal-backdrop"
+          onClick={() => setShowCalendarModal(false)}
+        >
+          <div
+            className="calendar-modal-container"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="calendar-modal-header">
+              <div>
+                <h3 className="calendar-modal-title">{name}</h3>
+                <p className="calendar-modal-subtitle">جدول الأيام المحجوزة • Live Availability</p>
+              </div>
+              <button
+                type="button"
+                className="calendar-modal-close-icon"
+                onClick={() => setShowCalendarModal(false)}
+                aria-label="إغلاق"
+              >
+                <FaTimes />
+              </button>
+            </div>
+
+            <div className="calendar-modal-body">
+              <AvailabilityCalendar productId={_id} bookedDates={bookedDates} />
+            </div>
+
+            <button
+              type="button"
+              className="calendar-modal-close-btn"
+              onClick={() => setShowCalendarModal(false)}
+            >
+              إغلاق
+            </button>
+          </div>
+        </div>
+      )} */}
     </div>
   );
 }

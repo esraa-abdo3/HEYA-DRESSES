@@ -684,6 +684,7 @@ span.outofstock{
   border-radius: 4px;
 }
 .seemore{
+  margin: 0 7px;
   background-color: black;
   padding: 10px 10px;
   color: white;
@@ -760,6 +761,10 @@ span.outofstock{
   transform: translateY(10px);
   opacity: 0;
   transition: all 0.3s ease 0.05s;
+  -webkit-border-radius: 30px;
+  -moz-border-radius: 30px;
+  -ms-border-radius: 30px;
+  -o-border-radius: 30px;
 }
 
 .image:hover .see-btn {
@@ -770,4 +775,95 @@ span.outofstock{
 .see-btn:hover {
   background: #000;
   color: #fff;
+}
+
+.check-dates-btn {
+  margin: 0 7px;
+  padding: 10px;
+  background: white;
+  border: 2px solid #293e29;
+  color: #293e29;
+  border-radius:16px;
+  font-weight: 700;
+  font-size: 0.85rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 5px rgba(217, 119, 6, 0.12);
+  -webkit-border-radius:16px;
+  -moz-border-radius:16px;
+  -ms-border-radius:16px;
+  -o-border-radius:16px;
+}
+
+.check-dates-btn:hover {
+  background: #293e29;
+  color: white;
+
+}
+
+@media (max-width: 768px) {
+  .check-dates-btn {
+    font-size: 0.8rem;
+    padding: 8px;
+
+  }
+}
+/* أنيميشن ظهور الكروت الجديدة */
+@keyframes fadeSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(25px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.item-animate {
+  animation: fadeSlideIn 0.5s ease forwards;
+  opacity: 0; /* يبدأ مخفي لحد ما الأنيميشن تشتغل */
+}
+
+/* زرار See More */
+.see-more-wrapper {
+  display: flex;
+  justify-content: center;
+  margin: 40px 0;
+}
+
+.see-more-btn {
+  padding: 12px 32px;
+  background: #111827;
+  color: #fff;
+  border: none;
+  border-radius: 30px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.2s ease, background 0.2s ease;
+}
+
+.see-more-btn:hover {
+  background: #1f2937;
+  transform: translateY(-2px);
+}
+
+.see-more-btn:active {
+  transform: translateY(0);
+}
+.see-more-btn {
+  padding: 12px 32px;
+  background: #111827;
+  color: #fff;
+  border: none;
+  border-radius: 30px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.2s ease, background 0.2s ease, opacity 0.3s ease;
 }

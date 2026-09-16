@@ -350,3 +350,16 @@ a {
   animation: fadeUp 0.8s ease forwards;
   animation-delay: 1s;
 }
+
+/* ── Main content layer (sits above the reviews) ── */
+.main-content-layer {
+  position: relative;
+  z-index: 2;
+  background: var(--background);
+  box-shadow: 0 25px 50px -10px rgba(0, 0, 0, 0.5);
+}
+
+/* ── Smooth scrolling ── */
+html {
+  scroll-behavior: smooth;
+}
